@@ -18,7 +18,7 @@
             <ImageView
                 android:id="@+id/productimselecter"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_height="190dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="50dp"
                 android:layout_marginEnd="10dp"
@@ -31,70 +31,71 @@
                 android:src="@drawable/addphoto"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="0.5"
+            android:layout_marginTop="20dp"
             android:orientation="vertical">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="0.5"
                 android:layout_marginTop="30dp"
+                android:layout_weight="0.5"
                 android:orientation="vertical">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.6"
-                    android:text="MRP"
-                    android:textAlignment="center"
-                    android:textSize="25dp"
-                    android:textColor="#000"
-                    android:layout_marginBottom="5dp"/>
+
                 <EditText
                     android:id="@+id/mrp"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.4"
-                    android:gravity="center"
+                    android:layout_width="176dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
                     android:layout_marginEnd="5dp"
+                    android:layout_weight="0.4"
+                    android:textAlignment="textStart"
+                    android:hint="Original Price"
                     android:background="@drawable/addphotobackbg"
-                    />
+                    android:gravity="center"
+                    tools:ignore="RtlCompat"
+                    android:paddingStart="5dp"
+                    android:paddingBottom="5dp"
+                    android:paddingEnd="5dp"
+                    android:paddingTop="5dp"/>
 
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="0.5"
                 android:layout_marginBottom="30dp"
+                android:layout_weight="0.5"
                 android:orientation="vertical">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.6"
-                    android:text="Offer Price"
-                    android:textAlignment="center"
-                    android:textSize="25dp"
-                    android:textColor="#000"/>
+
                 <EditText
                     android:id="@+id/offerpr"
-                    android:layout_width="match_parent"
+                    android:layout_width="176dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.4"
-                    android:gravity="center"
                     android:layout_marginStart="5dp"
-                    android:layout_marginEnd="5dp"
                     android:layout_marginTop="5dp"
+                    android:textAlignment="textStart"
+                    android:hint="Offer Price"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="0.4"
                     android:background="@drawable/addphotobackbg"
-                    />
+                    android:gravity="center"
+                    tools:ignore="RtlCompat"
+                    android:paddingStart="5dp"
+                    android:paddingBottom="5dp"
+                    android:paddingEnd="5dp"
+                    android:paddingTop="5dp"/>
 
             </LinearLayout>
-
 
 
         </LinearLayout>
@@ -104,23 +105,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="0.5"
+        android:layout_marginTop="20dp"
         android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:orientation="horizontal">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="0.6"
-                android:text="Quantity"
-                android:textColor="#000"
-                android:textSize="20dp"
-                android:textAlignment="center"
-                android:layout_marginBottom="10dp"
 
-               />
             <EditText
                 android:id="@+id/qun"
                 android:layout_width="match_parent"
@@ -131,6 +123,7 @@
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="5dp"
                 android:textColor="#000"
+                android:hint="Quantity"
                 android:background="@drawable/addphotobackbg"
                 android:paddingStart="5dp"
                 android:paddingBottom="5dp"
@@ -144,18 +137,7 @@
             android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:orientation="horizontal">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="0.6"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginStart="10dp"
-                android:text="Stock"
-                android:textSize="20dp"
-                android:textAlignment="center"
-                android:textColor="#000"
-                />
+
             <EditText
                 android:id="@+id/stocks"
                 android:textColor="#000"
@@ -166,6 +148,7 @@
                 android:layout_marginEnd="90dp"
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="5dp"
+                android:hint="Stock"
                 android:background="@drawable/addphotobackbg"
                 android:paddingStart="5dp"
                 android:paddingBottom="5dp"
@@ -179,15 +162,7 @@
             android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:orientation="horizontal">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="0.6"
-                android:textSize="20dp"
-                android:textAlignment="center"
-                android:text="Offer in%"
-                android:textColor="#000"
-                />
+
             <EditText
                 android:id="@+id/offper"
                 android:layout_width="match_parent"
@@ -199,6 +174,7 @@
                 android:layout_marginTop="5dp"
                 android:background="@drawable/addphotobackbg"
                 android:paddingStart="5dp"
+                android:hint="Offer %"
                 android:paddingBottom="5dp"
                 android:paddingEnd="5dp"
                 android:paddingTop="5dp"
@@ -210,15 +186,7 @@
             android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:orientation="horizontal">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="0.6"
-                android:textSize="20dp"
-                android:textAlignment="center"
-                android:text="Delivery"
-                android:textColor="#000"
-                />
+
             <EditText
                 android:id="@+id/dvch"
                 android:layout_width="match_parent"
@@ -230,12 +198,21 @@
                 android:layout_marginTop="5dp"
                 android:background="@drawable/addphotobackbg"
                 android:paddingStart="5dp"
+                android:hint="Delivery Charge"
                 android:paddingBottom="5dp"
                 android:paddingEnd="5dp"
                 android:paddingTop="5dp"
                 />
 
         </LinearLayout>
+
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0.5">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -245,7 +222,7 @@
             <Button
                 android:id="@+id/upload"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="55dp"
                 android:layout_marginEnd="50dp"
                 android:layout_marginStart="50dp"
                 android:layout_marginTop="5dp"
@@ -257,8 +234,6 @@
 
 
         </LinearLayout>
-
-
     </LinearLayout>
 
 
