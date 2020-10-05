@@ -14,23 +14,23 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
+
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FileDownloadTask;
+
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.File;
+
 import java.util.UUID;
 
 import static android.app.Activity.RESULT_OK;
-import static com.google.common.io.Files.getFileExtension;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -167,19 +167,11 @@ public class Addproducts extends Fragment {
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception exception) {
-                                // Handle unsuccessful uploads
-                                // ...
+                                Toast.makeText(getActivity(), "Error Occurred", Toast.LENGTH_SHORT).show();
                             }
                         });
-
-
-
-
-
             }
         });
-
-
         return v;
     }
 }
