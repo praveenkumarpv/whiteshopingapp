@@ -11,9 +11,11 @@
 
     <LinearLayout
         android:id="@+id/linearLayout6"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="213dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="40sp"
+        android:layout_marginEnd="150dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -23,27 +25,28 @@
         app:layout_constraintVertical_bias="0.01999998">
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/white"
+            style="@android:style/TextAppearance.DeviceDefault.Medium"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
             android:layout_weight="0.5"
+            android:autoSizeTextType="uniform"
             android:fontFamily="sans-serif-condensed-light"
             android:text="White"
             android:textColor="#000"
-            android:textFontWeight="500"
-            android:textSize="100sp" />
+            android:textFontWeight="500" />
 
         <TextView
             android:id="@+id/textView2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
             android:layout_weight="0.5"
+            android:autoSizeTextType="uniform"
             android:fontFamily="sans-serif-condensed-medium"
             android:text="Admin Panal"
             android:textColor="#000"
-            android:textFontWeight="200"
-            android:textSize="40sp" />
+            android:textFontWeight="20" />
     </LinearLayout>
 
     <LinearLayout
@@ -72,7 +75,7 @@
             android:fontFamily="@font/amarante"
             android:hint="Email"
             android:inputType="textEmailAddress"
-            android:textColor="#fff" />
+            android:textColor="#000" />
         <EditText
             android:id="@+id/password"
             android:layout_width="match_parent"
@@ -81,7 +84,8 @@
             android:ems="10"
             android:fontFamily="@font/amarante"
             android:hint="Password"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:textColor="#000"/>
         <Button
             android:id="@+id/loginbutton"
             android:layout_width="match_parent"

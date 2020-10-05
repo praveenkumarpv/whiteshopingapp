@@ -9,7 +9,11 @@
         android:id="@+id/home2"
         android:name="com.example.whiteshopingapp.home"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_home2_to_addproducts2"
+            app:destination="@id/addproducts2" />
+    </fragment>
     <fragment
         android:id="@+id/offer2"
         android:name="com.example.whiteshopingapp.offer"
@@ -20,4 +24,9 @@
         android:name="com.example.whiteshopingapp.profile"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/addproducts2"
+        android:name="com.example.whiteshopingapp.Addproducts"
+        android:label="fragment_addproducts"
+        tools:layout="@layout/fragment_addproducts" />
 </navigation>

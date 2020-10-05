@@ -20,14 +20,14 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/offeraddbutton"
-        android:layout_width="89dp"
-        android:layout_height="85dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="30dp"
-        android:backgroundTint="#fff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
         android:clickable="true"
-        android:scaleType="centerCrop"
+        android:backgroundTint="#fff"
         android:src="@drawable/addfloating"
+        app:maxImageSize="@android:dimen/app_icon_size"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

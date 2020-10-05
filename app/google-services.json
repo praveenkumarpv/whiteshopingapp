@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "127930544164",
+    "firebase_url": "https://whiteshoppingapp-f10fb.firebaseio.com",
+    "project_id": "whiteshoppingapp-f10fb",
+    "storage_bucket": "whiteshoppingapp-f10fb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:127930544164:android:8771c27cc6a4fe0ddae8b1",
+        "android_client_info": {
+          "package_name": "com.example.whiteshopingapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "127930544164-i0doivmja9194igi1cm3ao50sdd4tqvj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApdmsYaQnkXUYqSmJWdtd_EUi6oNf32ec"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "127930544164-i0doivmja9194igi1cm3ao50sdd4tqvj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
