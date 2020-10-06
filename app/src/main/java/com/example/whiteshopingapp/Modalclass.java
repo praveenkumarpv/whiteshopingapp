@@ -9,9 +9,10 @@ public class Modalclass {
     private String offpers;
     private String deliverycharge;
     private String imagename;
+    private String category;
     private  Modalclass(){}
 
-    public Modalclass(String imurl, String mrp, String offprice, String quantity, String stock, String offpers, String deliverycharge,String imagename) {
+    public Modalclass(String imurl, String mrp, String offprice, String quantity, String stock, String offpers, String deliverycharge,String imagename,String category) {
         this.imurl = imurl;
         this.mrp = mrp;
         this.offprice = offprice;
@@ -20,6 +21,7 @@ public class Modalclass {
         this.offpers = offpers;
         this.deliverycharge = deliverycharge;
         this.imagename =imagename;
+        this.category = category;
     }
 
     public String getImurl() {
@@ -84,5 +86,11 @@ public class Modalclass {
         this.imagename = imagename;
     }
 
+    public String getCategory() {
+        return category;
+    }
 
+    public void setCategory(String category) {
+        this.category = category;
+    }
 }

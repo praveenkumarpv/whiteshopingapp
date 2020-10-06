@@ -11,6 +11,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -43,10 +45,13 @@ public class Addproducts extends Fragment {
     private StorageReference mStorageRef;
     ImageView prdtimsel;
     Button prdtadbt;
-    EditText price,offp,quant,delivery,stock,offper;
+    EditText price,offp,delivery,stock,offper;
+    AutoCompleteTextView quant,cat;
     String deliveryfee;
     Uri downloadUrl;
     FirebaseFirestore db;
+    public  String [] quntity = new String[]{"KG","GM","LTR"};
+    public  String [] category = new String[]{"KG","GM","LTR"};
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -116,7 +121,24 @@ public class Addproducts extends Fragment {
         delivery =v.findViewById(R.id.dvch);
         stock = v.findViewById(R.id.stocks);
         offper = v.findViewById(R.id.offper);
+        cat = v.findViewById(R.id.catg);
         prdtadbt = v.findViewById(R.id.upload);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line,quntity);
+        quant.setAdapter(adapter);
+        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line,category);
+        cat.setAdapter(adapter);
+        quant.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                quant.showDropDown();
+            }
+        });
+        cat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cat.showDropDown();
+            }
+        });
         prdtimsel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -145,7 +167,7 @@ public class Addproducts extends Fragment {
                                            deliveryfee = "Free";
                                         }
                                         Modalclass upload = new Modalclass(downloadUrls,price.getText().toString().trim(),offp.getText().toString().trim(),quant.getText().toString().trim(),
-                                                stock.getText().toString().trim(),offper.getText().toString().trim(),deliveryfee,accesstoken);
+                                                stock.getText().toString().trim(),offper.getText().toString().trim(),deliveryfee,accesstoken,cat.getText().toString().trim());
                                         db.collection("products").document(random).set(upload).addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
