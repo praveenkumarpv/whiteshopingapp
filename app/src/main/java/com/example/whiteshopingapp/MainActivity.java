@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
                     password.setError("Valid Password Please");
                     password.requestFocus();
                 } else if (emails.isEmpty() && passwords.isEmpty()) {
-                    Toast.makeText(MainActivity.this, "Enter Valid Credinals Please", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Enter Valid Admin details Please", Toast.LENGTH_SHORT).show();
                 } else if (emails.equals(e) && passwords.equals(pass)) {
                     Intent i = new Intent(MainActivity.this, mainscreen.class);
                     startActivity(i);
