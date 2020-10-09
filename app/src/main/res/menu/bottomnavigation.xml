@@ -10,6 +10,10 @@
        android:title="Offer"/>
     <item
        android:id="@+id/profile"
-       android:icon="@drawable/profile"
-       android:title="Profile"/>
+       android:icon="@drawable/ordes"
+       android:title="Orders"/>
+    <item
+       android:id="@+id/logout"
+       android:icon="@drawable/log"
+       android:title="Logout"/>
 </menu>

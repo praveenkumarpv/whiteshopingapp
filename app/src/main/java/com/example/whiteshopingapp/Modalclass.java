@@ -1,6 +1,7 @@
 package com.example.whiteshopingapp;
 
 public class Modalclass {
+    private String productname;
     private String imurl;
     private String mrp;
     private String offprice;
@@ -12,7 +13,8 @@ public class Modalclass {
     private String category;
     private  Modalclass(){}
 
-    public Modalclass(String imurl, String mrp, String offprice, String quantity, String stock, String offpers, String deliverycharge,String imagename,String category) {
+    public Modalclass(String productname,String imurl, String mrp, String offprice, String quantity, String stock, String offpers, String deliverycharge,String imagename,String category) {
+        this.productname = productname;
         this.imurl = imurl;
         this.mrp = mrp;
         this.offprice = offprice;
@@ -92,5 +94,13 @@ public class Modalclass {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getProductname() {
+        return productname;
+    }
+
+    public void setProductname(String productname) {
+        this.productname = productname;
     }
 }

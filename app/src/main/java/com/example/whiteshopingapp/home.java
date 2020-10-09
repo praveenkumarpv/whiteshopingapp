@@ -13,9 +13,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -89,6 +91,7 @@ public class home extends Fragment {
             @Override
             public void onClick(View v) {
                 //Navigation.findNavController(v).navigate(R.id.action_home2_to_addproducts2);
+
                 fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.fragment,new Addproducts());
                 fragmentTransaction.commit();
@@ -105,9 +108,32 @@ public class home extends Fragment {
             }
 
             @Override
-            protected void onBindViewHolder(productviewholder productviewholder, int i, Modalclass modalclass) {
-                productviewholder.pri.setText(modalclass.getMrp());
+            protected void onBindViewHolder(final productviewholder productviewholder, int i, final Modalclass modalclass) {
+                productviewholder.pri.setText(modalclass.getOffprice());
+                productviewholder.mr.setText("₹"+modalclass.getMrp());
+                productviewholder.productname.setText(modalclass.getProductname());
                 Glide.with(getActivity()).asBitmap().load(modalclass.getImurl()).into(productviewholder.proimg);
+                productviewholder.edit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        editproduct lb = new editproduct();
+                        Bundle args = new Bundle();
+                        args.putString("productname",modalclass.getProductname());
+                        args.putString("price",modalclass.getMrp());
+                        args.putString("offerprice",modalclass.getOffprice());
+                        args.putString("quanty",modalclass.getQuantity());
+                        args.putString("stock",modalclass.getStock());
+                        args.putString("offerpercentage",modalclass.getOffpers());
+                        args.putString("category",modalclass.getCategory());
+                        args.putString("delivery",modalclass.getDeliverycharge());
+                        args.putString("image",modalclass.getImurl());
+                        args.putString("imagename",modalclass.getImagename());
+                        lb.setArguments(args);
+                        fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.fragment,lb);
+                        fragmentTransaction.commit();
+                    }
+                });
 
             }
         };
@@ -120,12 +146,16 @@ public class home extends Fragment {
 
     private class productviewholder extends RecyclerView.ViewHolder {
         ImageView proimg;
-        TextView pri;
+        TextView pri,mr,productname;
+        Button edit;
 
         public productviewholder(@NonNull View itemView) {
             super(itemView);
             proimg  = itemView.findViewById(R.id.productimage);
-            pri = itemView.findViewById(R.id.pricere);
+            pri = itemView.findViewById(R.id.offerprice);
+            mr = itemView.findViewById(R.id.mrps);
+            edit = itemView.findViewById(R.id.editbutton);
+            productname =itemView.findViewById(R.id.productnames);
         }
     }
     @Override

@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,11 +18,14 @@ import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import static com.example.whiteshopingapp.MainActivity.log;
+
 public class mainscreen extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
     Fragment fragment = null;
     FragmentTransaction fragmentTransaction;
     boolean doubleBackToExitPressedOnce = false;
+    int count = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,20 +42,36 @@ public class mainscreen extends AppCompatActivity {
 
 
                     case R.id.home:
-                        Toast.makeText(mainscreen.this, "home", Toast.LENGTH_SHORT).show();
                         fragment = new home();
                         fragmenttransation(fragment);
                         break;
                     case R.id.offer:
-                        Toast.makeText(mainscreen.this, "offer", Toast.LENGTH_SHORT).show();
                         fragment = new offer();
                         fragmenttransation(fragment);
                         break;
                     case R.id.profile:
-                        Toast.makeText(mainscreen.this, "profile", Toast.LENGTH_SHORT).show();
                         fragment = new profile();
                         fragmenttransation(fragment);
                         break;
+                    case R.id.logout:
+                        count ++;
+                        if (count == 1){
+                            Toast.makeText(mainscreen.this, "Press again to Logout", Toast.LENGTH_SHORT).show();
+                        }
+                        else if (count == 2){
+                            SharedPreferences settings = getSharedPreferences(log, 0);
+                            SharedPreferences.Editor editor = settings.edit();
+                            editor.putBoolean("not", false);
+                            editor.commit();
+                            mainscreen.this.finish();
+                        }
+                        new Handler().postDelayed(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                count--;
+                            }
+                        }, 2000);
                 }
 
                 return true;

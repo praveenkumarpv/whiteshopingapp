@@ -1,12 +1,20 @@
 package com.example.whiteshopingapp;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.provider.CalendarContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import java.time.Year;
+import java.util.Calendar;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -14,6 +22,10 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class profile extends Fragment {
+    TextView date;
+    ImageView drop;
+    DatePickerDialog datePickerDialog;
+    int year,month,day;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -59,6 +71,40 @@ public class profile extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        View v = inflater.inflate(R.layout.fragment_profile, container, false);
+        date = v.findViewById(R.id.datepicer);
+        drop = v.findViewById(R.id.datepickerimage);
+        Calendar calendar = Calendar.getInstance();
+        year = calendar.get(Calendar.YEAR);
+        month = calendar.get(Calendar.MONTH);
+        day = calendar.get(Calendar.DAY_OF_MONTH);
+        date.setText(day+"/"+month+"/"+year);
+        date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getdate();
+            }
+        });
+        drop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getdate();
+            }
+        });
+        return v;
+    }
+
+    private void getdate() {
+        Calendar calendar = Calendar.getInstance();
+           year = calendar.get(Calendar.YEAR);
+           month = calendar.get(Calendar.MONTH);
+           day = calendar.get(Calendar.DAY_OF_MONTH);
+        datePickerDialog  = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                date.setText(dayOfMonth + "/"+ month +"/"+ year);
+            }
+        },year,month,day);
+        datePickerDialog.show();
     }
 }

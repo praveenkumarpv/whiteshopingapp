@@ -43,13 +43,13 @@ public class Addproducts extends Fragment {
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri filepath;
     private StorageReference mStorageRef;
-    ImageView prdtimsel;
-    Button prdtadbt;
-    EditText price,offp,delivery,stock,offper;
-    AutoCompleteTextView quant,cat;
-    String deliveryfee;
-    Uri downloadUrl;
-    FirebaseFirestore db;
+    private ImageView prdtimsel;
+    private Button prdtadbt;
+    private EditText produ, price,offp,delivery,stock,offper;
+    private AutoCompleteTextView quant,cat;
+    private String deliveryfee;
+    private Uri downloadUrl;
+    private FirebaseFirestore db;
     public  String [] quntity = new String[]{"KG","GM","LTR"};
     public  String [] category = new String[]{"KG","GM","LTR"};
 
@@ -114,6 +114,7 @@ public class Addproducts extends Fragment {
         View v =  inflater.inflate(R.layout.fragment_addproducts, container, false);
         mStorageRef = FirebaseStorage.getInstance().getReference();
         db = FirebaseFirestore.getInstance();
+        produ = v.findViewById(R.id.productnames);
         prdtimsel = v.findViewById(R.id.productimselecter);
         price = v.findViewById(R.id.mrp);
         offp = v.findViewById(R.id.offerpr);
@@ -166,7 +167,7 @@ public class Addproducts extends Fragment {
                                         if (delivery.getText().toString().trim().isEmpty()){
                                            deliveryfee = "Free";
                                         }
-                                        Modalclass upload = new Modalclass(downloadUrls,price.getText().toString().trim(),offp.getText().toString().trim(),quant.getText().toString().trim(),
+                                        Modalclass upload = new Modalclass(produ.getText().toString().trim(),downloadUrls,price.getText().toString().trim(),offp.getText().toString().trim(),quant.getText().toString().trim(),
                                                 stock.getText().toString().trim(),offper.getText().toString().trim(),deliveryfee,accesstoken,cat.getText().toString().trim());
                                         db.collection("products").document(random).set(upload).addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
