@@ -3,18 +3,36 @@ package com.example.whiteshopingapp;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.CalendarContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
 import java.time.Year;
 import java.util.Calendar;
+import java.util.Collection;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,7 +43,12 @@ public class profile extends Fragment {
     TextView date;
     ImageView drop;
     DatePickerDialog datePickerDialog;
-    int year,month,day;
+    int year ,month,day;
+    FirebaseFirestore db;
+    RecyclerView order;
+    FragmentTransaction fragmentTransaction;
+    private String orderselecter,years,months,dates;
+    private FirestoreRecyclerAdapter adapter;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -72,39 +95,128 @@ public class profile extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
+        db = FirebaseFirestore.getInstance();
         date = v.findViewById(R.id.datepicer);
         drop = v.findViewById(R.id.datepickerimage);
-        Calendar calendar = Calendar.getInstance();
+        order = v.findViewById(R.id.orderview);
+       Calendar calendar = Calendar.getInstance();
         year = calendar.get(Calendar.YEAR);
+        years = Integer.toString(year);
         month = calendar.get(Calendar.MONTH);
+        months = Integer.toString(month);
         day = calendar.get(Calendar.DAY_OF_MONTH);
-        date.setText(day+"/"+month+"/"+year);
+        dates = Integer.toString(day);
+        orderselecter = dates+"-"+months+"-"+years ;
+        getdata(orderselecter);
+        date.setText(dates+"/"+months+"/"+years);
         date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getdate();
+
             }
         });
         drop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getdate();
+                Calendar calendar = Calendar.getInstance();
+                year = calendar.get(Calendar.YEAR);
+                years = Integer.toString(year);
+                month = calendar.get(Calendar.MONTH);
+                months = Integer.toString(month);
+                day = calendar.get(Calendar.DAY_OF_MONTH);
+                dates = Integer.toString(day);
+
+                datePickerDialog  = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int day) {
+                        date.setText(day+ "/"+ month +"/"+ year);
+                        orderselecter = day+"-"+month+"-"+year ;
+                        orderSorted lv = new orderSorted();
+                        Bundle arg = new Bundle();
+                        arg.putString("date",orderselecter);
+                        lv.setArguments(arg);
+                        fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.fragment,lv);
+                        fragmentTransaction.commit();
+
+                    }
+                },year,month,day);
+                datePickerDialog.show();
             }
+
         });
+
         return v;
     }
 
-    private void getdate() {
-        Calendar calendar = Calendar.getInstance();
-           year = calendar.get(Calendar.YEAR);
-           month = calendar.get(Calendar.MONTH);
-           day = calendar.get(Calendar.DAY_OF_MONTH);
-        datePickerDialog  = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+    private void getdata(String orderselecter) {
+        String wow = orderselecter;
+        Query query = db.collection(wow);
+        Toast.makeText(getActivity(), wow, Toast.LENGTH_SHORT).show();
+        FirestoreRecyclerOptions<ordermodalclass> op = new FirestoreRecyclerOptions.Builder<ordermodalclass>().setQuery(query,ordermodalclass.class).build();
+        adapter = new FirestoreRecyclerAdapter<ordermodalclass, orderviewholder>(op) {
+            @NonNull
             @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                date.setText(dayOfMonth + "/"+ month +"/"+ year);
+            public orderviewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.orderviewrecycler,parent,false);
+                return new orderviewholder(view);
             }
-        },year,month,day);
-        datePickerDialog.show();
+
+            @Override
+            protected void onBindViewHolder(@NonNull orderviewholder holder, int position, @NonNull ordermodalclass model) {
+                Glide.with(getActivity()).asBitmap().load(model.getImurl()).into(holder.proimg);
+                holder.name.setText(model.getName());
+                holder.time.setText(model.getTime());
+                holder.status.setText(model.getStatus());
+                holder.orderid.setText(model.getOrderid());
+                holder.ordercard.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.fragment,new orderdetails());
+                        fragmentTransaction.commit();
+                    }
+                });
+
+            }
+
+        };
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        order.setHasFixedSize(true);
+        order.setLayoutManager(layoutManager);
+        order.setAdapter(adapter);
+
     }
+
+
+    private class orderviewholder extends RecyclerView.ViewHolder {
+        CircleImageView proimg;
+        TextView name,time,orderid,status;
+        CardView ordercard;
+        public orderviewholder(@NonNull View itemView) {
+            super(itemView);
+            proimg = itemView.findViewById(R.id.proimgs);
+            name = itemView.findViewById(R.id.proname);
+            time = itemView.findViewById(R.id.protime);
+            orderid = itemView.findViewById(R.id.orderid);
+            status = itemView.findViewById(R.id.status);
+            ordercard = itemView.findViewById(R.id.ordercardview);
+        }
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        adapter.startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        adapter.startListening();
+    }
+
+
+
 }
