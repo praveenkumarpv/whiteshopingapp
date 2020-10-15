@@ -52,6 +52,7 @@ public class offer extends Fragment {
     private String imagename;
     private String activity;
     private int limitoffers,limithome;
+    Loadingadapter loadingadapter;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -99,6 +100,7 @@ public class offer extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_offer, container, false);
         mStorageRef = FirebaseStorage.getInstance().getReference();
+        loadingadapter = new Loadingadapter(getActivity());
         db = FirebaseFirestore.getInstance();
         homeadd = view.findViewById(R.id.homeadd);
         homeoffer = view.findViewById(R.id.homeoffer);
@@ -123,6 +125,7 @@ public class offer extends Fragment {
                 kholder.delete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        loadingadapter.startloading();
                         imagename = models.getImagename();
                         StorageReference desertRef = mStorageRef.child("offerscreenbanner/" +imagename);
                         desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -132,7 +135,9 @@ public class offer extends Fragment {
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
+                                        loadingadapter.finishloading();
                                         Toast.makeText(getActivity(), "Deleted", Toast.LENGTH_SHORT).show();
+
                                     }
                                 });
 
@@ -176,6 +181,7 @@ public class offer extends Fragment {
                 holder.delete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        loadingadapter.startloading();
                         imagename = model.getImagename();
                         StorageReference desertRef = mStorageRef.child("homescreenbanner/" +imagename);
                         desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -184,6 +190,7 @@ public class offer extends Fragment {
                                 db.collection("homescreenbanner").document(imagename).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
+                                        loadingadapter.finishloading();
                                         Toast.makeText(getActivity(), "Succesfully deleted", Toast.LENGTH_SHORT).show();
                                     }
                                 });
@@ -250,6 +257,7 @@ public class offer extends Fragment {
         if (requestCode == PICK_IMAGE_REQUEST && resultCode ==
                 RESULT_OK
                 && data != null && data.getData() != null) {
+            loadingadapter.startloading();
             filepath = data.getData();
             final String random = UUID.randomUUID().toString();
             if (activity.equals("home")){
@@ -268,6 +276,7 @@ public class offer extends Fragment {
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
+                                                loadingadapter.finishloading();
                                                 Toast.makeText(getActivity(), "Added", Toast.LENGTH_SHORT).show();
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
@@ -304,6 +313,7 @@ public class offer extends Fragment {
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
+                                                loadingadapter.finishloading();
                                                 Toast.makeText(getActivity(), "Added", Toast.LENGTH_SHORT).show();
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {

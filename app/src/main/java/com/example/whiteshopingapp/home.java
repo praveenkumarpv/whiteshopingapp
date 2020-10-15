@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -83,7 +84,17 @@ public class home extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         db = FirebaseFirestore.getInstance();
+        final Loadingadapter loadingadapter = new Loadingadapter(getActivity());
+        loadingadapter.startloading();
         View v = inflater.inflate(R.layout.fragment_home, container, false);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                loadingadapter.finishloading();
+
+            }
+        },5000);
 
         addp =v.findViewById(R.id.addproducts);
         addedp = v.findViewById(R.id.productre);

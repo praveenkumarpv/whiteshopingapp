@@ -46,6 +46,7 @@ public class profile extends Fragment {
     int year ,month,day;
     FirebaseFirestore db;
     RecyclerView order;
+    int ordercount;
     FragmentTransaction fragmentTransaction;
     private String orderselecter,years,months,dates;
     private FirestoreRecyclerAdapter adapter;
@@ -102,7 +103,7 @@ public class profile extends Fragment {
        Calendar calendar = Calendar.getInstance();
         year = calendar.get(Calendar.YEAR);
         years = Integer.toString(year);
-        month = calendar.get(Calendar.MONTH);
+        month = calendar.get(Calendar.MONTH)+1;
         months = Integer.toString(month);
         day = calendar.get(Calendar.DAY_OF_MONTH);
         dates = Integer.toString(day);
@@ -121,11 +122,10 @@ public class profile extends Fragment {
                 Calendar calendar = Calendar.getInstance();
                 year = calendar.get(Calendar.YEAR);
                 years = Integer.toString(year);
-                month = calendar.get(Calendar.MONTH);
+                month = calendar.get(Calendar.MONTH)+1;
                 months = Integer.toString(month);
                 day = calendar.get(Calendar.DAY_OF_MONTH);
                 dates = Integer.toString(day);
-
                 datePickerDialog  = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int day) {
@@ -149,7 +149,7 @@ public class profile extends Fragment {
         return v;
     }
 
-    private void getdata(String orderselecter) {
+    private void getdata(final String orderselecter) {
         String wow = orderselecter;
         Query query = db.collection(wow);
         Toast.makeText(getActivity(), wow, Toast.LENGTH_SHORT).show();
@@ -163,7 +163,7 @@ public class profile extends Fragment {
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull orderviewholder holder, int position, @NonNull ordermodalclass model) {
+            protected void onBindViewHolder(@NonNull orderviewholder holder, int position, @NonNull final ordermodalclass model) {
                 Glide.with(getActivity()).asBitmap().load(model.getImurl()).into(holder.proimg);
                 holder.name.setText(model.getName());
                 holder.time.setText(model.getTime());
@@ -172,14 +172,31 @@ public class profile extends Fragment {
                 holder.ordercard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        orderdetails ord = new orderdetails();
+                        Bundle args = new Bundle();
+                        args.putString("img",model.getImurl());
+                        args.putString("name",model.getName());
+                        args.putString("orderid",model.getOrderid());
+                        args.putString("status",model.getStatus());
+                        args.putString("date",orderselecter);
+                        ord.setArguments(args);
                         fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                        fragmentTransaction.replace(R.id.fragment,new orderdetails());
+                        fragmentTransaction.replace(R.id.fragment,ord);
                         fragmentTransaction.commit();
                     }
                 });
 
             }
 
+            @Override
+            public int getItemCount() {
+
+                ordercount = super.getItemCount();
+                if (ordercount == 0){
+                    Toast.makeText(getActivity(), "No orders yet", Toast.LENGTH_SHORT).show();
+                }
+                return super.getItemCount();
+            }
         };
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         order.setHasFixedSize(true);
