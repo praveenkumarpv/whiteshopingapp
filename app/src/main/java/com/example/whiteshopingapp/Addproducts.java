@@ -12,11 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -46,12 +46,12 @@ public class Addproducts extends Fragment {
     private ImageView prdtimsel;
     private Button prdtadbt;
     private EditText produ, price,offp,delivery,stock,offper;
-    private AutoCompleteTextView quant,cat;
     private String deliveryfee;
     private Uri downloadUrl;
+    private Spinner quant,cat;
     private FirebaseFirestore db;
-    public  String [] quntity = new String[]{"KG","GM","LTR"};
-    public  String [] category = new String[]{"KG","GM","LTR"};
+    public  String [] quntity = new String[]{"Quantity","Kilogram","Gram","Liter"};
+    public  String [] category = new String[]{"Household Items","Kitchen & Dining Needs","Snacks,Biscuits & Chocolate","Beverages","Grocery & Fruits","Personal care","Household Items"};
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -113,6 +113,7 @@ public class Addproducts extends Fragment {
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_addproducts, container, false);
         mStorageRef = FirebaseStorage.getInstance().getReference();
+        final Loadingadapter loadingadapter = new Loadingadapter(getActivity());
         db = FirebaseFirestore.getInstance();
         produ = v.findViewById(R.id.productnames);
         prdtimsel = v.findViewById(R.id.productimselecter);
@@ -127,19 +128,9 @@ public class Addproducts extends Fragment {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line,quntity);
         quant.setAdapter(adapter);
         ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line,category);
-        cat.setAdapter(adapter);
-        quant.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                quant.showDropDown();
-            }
-        });
-        cat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cat.showDropDown();
-            }
-        });
+        cat.setAdapter(adapter1);
+
+
         prdtimsel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -152,47 +143,58 @@ public class Addproducts extends Fragment {
         prdtadbt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String random = UUID.randomUUID().toString();
-                final StorageReference riversRef = mStorageRef.child("Productimages/" +random);
-                riversRef.putFile(filepath)
-                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                 riversRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                     @Override
-                                     public void onSuccess(Uri uri) {
-                                        downloadUrl = uri;
-                                        String downloadUrls = downloadUrl.toString();
-                                        String accesstoken = random;
-                                        if (delivery.getText().toString().trim().isEmpty()){
-                                           deliveryfee = "Free";
+
+                try {
+                    loadingadapter.startloading();
+                    final String random = UUID.randomUUID().toString();
+                    final StorageReference riversRef = mStorageRef.child("Productimages/" +random);
+                    riversRef.putFile(filepath)
+                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    riversRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+                                            downloadUrl = uri;
+                                            String downloadUrls = downloadUrl.toString();
+                                            String accesstoken = random;
+                                            if (delivery.getText().toString().trim().isEmpty()){
+                                                deliveryfee = "Free";
+                                            }
+                                            Modalclass upload = new Modalclass(produ.getText().toString().trim(),downloadUrls,price.getText().toString().trim(),offp.getText().toString().trim(),quant.getSelectedItem().toString(),
+                                                    stock.getText().toString().trim(),offper.getText().toString().trim(),deliveryfee,accesstoken,cat.getSelectedItem().toString());
+                                            db.collection("products").document(random).set(upload).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Toast.makeText(getActivity(), "Uploading Successfull", Toast.LENGTH_SHORT).show();
+                                                    loadingadapter.finishloading();
+
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Toast.makeText(getActivity(), "Uploading Failed", Toast.LENGTH_SHORT).show();
+                                                    loadingadapter.finishloading();
+                                                }
+                                            });
+
                                         }
-                                        Modalclass upload = new Modalclass(produ.getText().toString().trim(),downloadUrls,price.getText().toString().trim(),offp.getText().toString().trim(),quant.getText().toString().trim(),
-                                                stock.getText().toString().trim(),offper.getText().toString().trim(),deliveryfee,accesstoken,cat.getText().toString().trim());
-                                        db.collection("products").document(random).set(upload).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                Toast.makeText(getActivity(), "Uploading Successfull", Toast.LENGTH_SHORT).show();
+                                    });
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception exception) {
+                                    Toast.makeText(getActivity(), "Error Occurred", Toast.LENGTH_SHORT).show();
+                                    loadingadapter.finishloading();
+                                }
+                            });
 
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Toast.makeText(getActivity(), "Uploading Failed", Toast.LENGTH_SHORT).show();
+                }catch (Exception e){
+                    Toast.makeText(getActivity(), "Select a image", Toast.LENGTH_SHORT).show();
+                    loadingadapter.finishloading();
+                }
 
-                                            }
-                                        });
-
-                                     }
-                                 });
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception exception) {
-                                Toast.makeText(getActivity(), "Error Occurred", Toast.LENGTH_SHORT).show();
-                            }
-                        });
             }
         });
         return v;

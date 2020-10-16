@@ -12,12 +12,14 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -45,7 +47,8 @@ public class editproduct extends Fragment {
     private ImageView prdtimseled;
     private Button updates,delets;
     private EditText produed, priceed,offped,deliveryed,stocked,offpered;
-    private AutoCompleteTextView quanted,cated;
+    private Spinner quanted,cated;
+    TextView qunt,catet;
     private String deliveryfee,imagename,product,mrp,off,quanty,stock,offerpercent,categ,delivery,imageurl;
     private Uri downloadUrl;
     private FirebaseFirestore db;
@@ -112,19 +115,22 @@ public class editproduct extends Fragment {
                              Bundle savedInstanceState) {
         View v= inflater.inflate(R.layout.fragment_editproduct, container, false);
         mStorageRef = FirebaseStorage.getInstance().getReference();
+        final Loadingadapter loadingadapter = new Loadingadapter(getActivity());
         db = FirebaseFirestore.getInstance();
         produed = v.findViewById(R.id.productnamesed);
         prdtimseled = v.findViewById(R.id.productimselectered);
         priceed = v.findViewById(R.id.mrped);
         offped = v.findViewById(R.id.offerpred);
-        quanted = v.findViewById(R.id.quned);
+        quanted = v.findViewById(R.id.qun);
         deliveryed =v.findViewById(R.id.dvched);
         stocked = v.findViewById(R.id.stocksed);
         offpered = v.findViewById(R.id.offpered);
-        cated = v.findViewById(R.id.catged);
+        cated = v.findViewById(R.id.catg);
         updates = v.findViewById(R.id.upload);
         delets = v.findViewById(R.id.delet);
         updates = v.findViewById(R.id.update);
+        qunt = v.findViewById(R.id.quntext);
+        catet = v.findViewById(R.id.catgtext);
         product = getArguments().getString("productname");
         mrp = getArguments().getString("price");
         off = getArguments().getString("offerprice");
@@ -138,28 +144,39 @@ public class editproduct extends Fragment {
         produed.setText(product);
         priceed.setText(mrp);
         offped.setText(off);
-        quanted.setText(quanty);
+        qunt.setText(quanty);
         deliveryed.setText(delivery);
         stocked.setText(stock);
         offpered.setText(offerpercent);
-        cated.setText(categ);
+        catet.setText(categ);
         Glide.with(getActivity()).asBitmap().load(imageurl).into(prdtimseled);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line,quntity);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line,quntity);
         quanted.setAdapter(adapter);
         ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line,category);
         cated.setAdapter(adapter1);
-        quanted.setOnClickListener(new View.OnClickListener() {
+        quanted.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-                quanted.showDropDown();
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                qunt.setText(quanted.getSelectedItem().toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                qunt.setText(quanty);
             }
         });
-        cated.setOnClickListener(new View.OnClickListener() {
+        cated.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-                cated.showDropDown();
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                catet.setText(cated.getSelectedItem().toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                catet.setText(categ);
             }
         });
+
         prdtimseled.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -172,6 +189,7 @@ public class editproduct extends Fragment {
         delets.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                loadingadapter.startloading();
                 StorageReference desertRef = mStorageRef.child("Productimages/" +imagename);
                 desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -180,6 +198,7 @@ public class editproduct extends Fragment {
                           @Override
                           public void onSuccess(Void aVoid) {
                               Toast.makeText(getActivity(), "Deleted Succesfully", Toast.LENGTH_SHORT).show();
+                              loadingadapter.finishloading();
                               fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                               fragmentTransaction.replace(R.id.fragment,new Addproducts());
                               fragmentTransaction.commit();
@@ -205,25 +224,29 @@ public class editproduct extends Fragment {
         updates.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                loadingadapter.startloading();
                 if (filepath == null){
                     if (deliveryed.getText().toString().trim().isEmpty()){
                         deliveryfee = "Free";
                     }
-                    Modalclass upload = new Modalclass(produed.getText().toString().trim(),imageurl,priceed.getText().toString().trim(),offped.getText().toString().trim(),quanted.getText().toString().trim(),
-                            stocked.getText().toString().trim(),offpered.getText().toString().trim(),deliveryfee,imagename,cated.getText().toString().trim());
+                    Modalclass upload = new Modalclass(produed.getText().toString().trim(),imageurl,priceed.getText().toString().trim(),offped.getText().toString().trim(),quanted.getSelectedItem().toString(),
+                            stocked.getText().toString().trim(),offpered.getText().toString().trim(),deliveryfee,imagename,cated.getSelectedItem().toString().trim());
                     db.collection("products").document(imagename).set(upload, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
+                            loadingadapter.finishloading();
                             Toast.makeText(getActivity(), "Updated", Toast.LENGTH_SHORT).show();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
+                            loadingadapter.finishloading();
                             Toast.makeText(getActivity(), "Update Failed", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
                 else {
+
                     final String random = UUID.randomUUID().toString();
                     final StorageReference riversRef = mStorageRef.child("Productimages/" +random);
                     riversRef.putFile(filepath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -238,17 +261,19 @@ public class editproduct extends Fragment {
                                     if (deliveryed.getText().toString().trim().isEmpty()){
                                         deliveryfee = "Free";
                                     }
-                                    Modalclass upload = new Modalclass(produed.getText().toString().trim(),downloadUrls,priceed.getText().toString().trim(),offped.getText().toString().trim(),quanted.getText().toString().trim(),
-                                            stocked.getText().toString().trim(),offpered.getText().toString().trim(),deliveryfee,accesstoken,cated.getText().toString().trim());
+                                    Modalclass upload = new Modalclass(produed.getText().toString().trim(),downloadUrls,priceed.getText().toString().trim(),offped.getText().toString().trim(),quanted.getSelectedItem().toString().trim(),
+                                            stocked.getText().toString().trim(),offpered.getText().toString().trim(),deliveryfee,accesstoken,cated.getSelectedItem().toString().trim());
                                     db.collection("products").document(imagename).set(upload, SetOptions.merge())
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
+                                                    loadingadapter.finishloading();
                                                     Toast.makeText(getActivity(), "Updated", Toast.LENGTH_SHORT).show();
                                                 }
                                             }).addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
+                                            loadingadapter.finishloading();
                                             Toast.makeText(getActivity(), "Update Failed", Toast.LENGTH_SHORT).show();
                                         }
                                     });
@@ -260,6 +285,7 @@ public class editproduct extends Fragment {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Toast.makeText(getActivity(), "Error Occured", Toast.LENGTH_SHORT).show();
+                            loadingadapter.finishloading();
 
                         }
                     });

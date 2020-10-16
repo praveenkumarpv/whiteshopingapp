@@ -11,7 +11,7 @@
 
     <LinearLayout
         android:id="@+id/linearLayout6"
-        android:layout_width="0dp"
+        android:layout_width="240dp"
         android:layout_height="213dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="40sp"
@@ -26,27 +26,30 @@
 
         <TextView
             android:id="@+id/white"
-            style="@android:style/TextAppearance.DeviceDefault.Medium"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:layout_weight="0.5"
-            android:autoSizeTextType="uniform"
-            android:fontFamily="sans-serif-condensed-light"
+            android:layout_marginLeft="0dp"
+            android:layout_weight="0.4"
+            android:textSize="90dp"
+            android:autoSizeMaxTextSize="100dp"
+            android:autoSizeMinTextSize="50dp"
+            android:autoSizePresetSizes="100"
+            android:fontFamily="sans-serif-condensed-medium"
             android:text="White"
-            android:textColor="#000"
-            android:textFontWeight="500" />
+            android:textColor="#000"/>
 
         <TextView
             android:id="@+id/textView2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            android:autoSizeTextType="uniform"
-            android:fontFamily="sans-serif-condensed-medium"
-            android:text="Admin Panal"
-            android:textColor="#000"
-            android:textFontWeight="20" />
+            android:layout_weight="0.7"
+            android:textSize="45dp"
+            android:autoSizeMaxTextSize="60dp"
+            android:autoSizeMinTextSize="20dp"
+            android:autoSizePresetSizes="45"
+            android:fontFamily="sans-serif-condensed-light"
+            android:text="Admin Panel"
+            android:textColor="#000"/>
     </LinearLayout>
 
     <LinearLayout

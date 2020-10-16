@@ -94,7 +94,7 @@ public class home extends Fragment {
                 loadingadapter.finishloading();
 
             }
-        },5000);
+        },2000);
 
         addp =v.findViewById(R.id.addproducts);
         addedp = v.findViewById(R.id.productre);
