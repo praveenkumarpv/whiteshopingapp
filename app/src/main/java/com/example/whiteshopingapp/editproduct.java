@@ -168,7 +168,7 @@ public class editproduct extends Fragment {
         cated.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                catet.setText(cated.getSelectedItem().toString());
+//                catet.setText(cated.getSelectedItem().toString());
             }
 
             @Override

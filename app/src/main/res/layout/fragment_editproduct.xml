@@ -154,13 +154,18 @@
                     android:id="@+id/quntext"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:textColor="#000"
+                    android:gravity="center_vertical"
+                    android:text="quntity"
                     android:layout_weight="0.2"/>
                 <Spinner
                     android:id="@+id/qun"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/dropdown"
-                    android:layout_weight="0.9"/>
+                    android:layout_weight="0.9"
+                    android:visibility="gone"/>
 
             </LinearLayout>
         </LinearLayout>
@@ -236,13 +241,15 @@
                     android:id="@+id/catgtext"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.2"/>
+                    android:layout_weight="0.2"
+                    android:textColor="#000"/>
                 <Spinner
                     android:id="@+id/catg"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/dropdown"
-                    android:layout_weight="0.9"/>
+                    android:layout_weight="0.9"
+                    android:visibility="gone"/>
 
             </LinearLayout>
 
