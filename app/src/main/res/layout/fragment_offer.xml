@@ -29,7 +29,7 @@
                 android:layout_height="match_parent">
                 <ImageView
                     android:id="@+id/homeadd"
-                    android:layout_width="300dp"
+                    android:layout_width="310dp"
                     android:layout_height="match_parent"
                     android:background="@drawable/addphotobackbg"
                     android:src="@drawable/addphoto"
@@ -78,7 +78,7 @@
                 android:layout_height="match_parent">
                 <ImageView
                     android:id="@+id/offeradd"
-                    android:layout_width="300dp"
+                    android:layout_width="310dp"
                     android:layout_height="match_parent"
                     android:background="@drawable/addphotobackbg"
                     android:src="@drawable/addphoto"
