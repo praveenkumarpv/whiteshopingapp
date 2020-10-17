@@ -84,15 +84,15 @@
                     android:layout_marginStart="5dp"
                     android:layout_marginEnd="5dp"
                     android:layout_weight="0.4"
-                    android:textAlignment="textStart"
-                    android:hint="Original Price"
                     android:background="@drawable/addphotobackbg"
                     android:gravity="center"
-                    tools:ignore="RtlCompat"
+                    android:hint="MRP"
                     android:paddingStart="5dp"
-                    android:paddingBottom="5dp"
+                    android:paddingTop="5dp"
                     android:paddingEnd="5dp"
-                    android:paddingTop="5dp"/>
+                    android:paddingBottom="5dp"
+                    android:textAlignment="textStart"
+                    tools:ignore="RtlCompat" />
 
             </LinearLayout>
 
