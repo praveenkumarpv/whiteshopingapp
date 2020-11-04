@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="100dp">
+    android:layout_height="100dp"
+    android:layout_marginBottom="5dp">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/ordercardview"
@@ -23,7 +24,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.7"
-                android:scaleType="fitXY"
                 android:src="@drawable/profile"/>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -37,7 +37,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="0.5"
-                    android:autoSizeTextType="uniform"
+                    android:textSize="28dp"
                     android:text="name"
                     android:textColor="#000"/>
                 <TextView
@@ -55,7 +55,9 @@
                     android:layout_weight="0.6"
                     android:autoSizeTextType="uniform"
                     android:textColor="#000"
-                    android:text="Orderid"/>
+                    android:text="Orderid"
+                    android:maxLines="1"
+                    android:maxLength="8"/>
 
             </LinearLayout>
 

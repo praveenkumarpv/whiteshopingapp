@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -51,7 +52,7 @@ public class Addproducts extends Fragment {
     private Spinner quant,cat;
     private FirebaseFirestore db;
     public  String [] quntity = new String[]{"Quantity","Kilogram","Gram","Liter"};
-    public  String [] category = new String[]{"Household Items","Kitchen & Dining Needs","Snacks,Biscuits & Chocolate","Beverages","Grocery & Fruits","Personal care","Household Items"};
+    public  String [] category = new String[]{"Household Items","Kitchen & Dining Needs","Snacks,Biscuits & Chocolate","Beverages","Grocery & Fruits","Personal care","Household Items","Add new category"};
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -114,6 +115,7 @@ public class Addproducts extends Fragment {
         View v =  inflater.inflate(R.layout.fragment_addproducts, container, false);
         mStorageRef = FirebaseStorage.getInstance().getReference();
         final Loadingadapter loadingadapter = new Loadingadapter(getActivity());
+        final cataddadpter cataddadpter = new cataddadpter(getActivity());
         db = FirebaseFirestore.getInstance();
         produ = v.findViewById(R.id.productnames);
         prdtimsel = v.findViewById(R.id.productimselecter);
@@ -129,6 +131,21 @@ public class Addproducts extends Fragment {
         quant.setAdapter(adapter);
         ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line,category);
         cat.setAdapter(adapter1);
+        cat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedItem = parent.getItemAtPosition(position).toString();
+                if(selectedItem.equals("Add new category"))
+                {
+                    cataddadpter.startadding();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
 
         prdtimsel.setOnClickListener(new View.OnClickListener() {
@@ -158,11 +175,16 @@ public class Addproducts extends Fragment {
                                             downloadUrl = uri;
                                             String downloadUrls = downloadUrl.toString();
                                             String accesstoken = random;
+                                            float p  = Integer.parseInt(price.getText().toString().trim());
+                                            float o  = Integer.parseInt(offp.getText().toString().trim());
+                                            float total = ((p-o)/p)*100;
+                                            int tto = (int) total;
+                                            String offerpersent = Integer.toString(tto);
                                             if (delivery.getText().toString().trim().isEmpty()){
                                                 deliveryfee = "Free";
                                             }
                                             Modalclass upload = new Modalclass(produ.getText().toString().trim(),downloadUrls,price.getText().toString().trim(),offp.getText().toString().trim(),quant.getSelectedItem().toString(),
-                                                    stock.getText().toString().trim(),offper.getText().toString().trim(),deliveryfee,accesstoken,cat.getSelectedItem().toString());
+                                                    stock.getText().toString().trim(),offerpersent,deliveryfee,accesstoken,cat.getSelectedItem().toString());
                                             db.collection("products").document(random).set(upload).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {

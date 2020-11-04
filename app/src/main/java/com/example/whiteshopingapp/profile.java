@@ -24,10 +24,15 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import java.text.SimpleDateFormat;
 import java.time.Year;
 import java.util.Calendar;
 import java.util.Collection;
@@ -107,9 +112,9 @@ public class profile extends Fragment {
         months = Integer.toString(month);
         day = calendar.get(Calendar.DAY_OF_MONTH);
         dates = Integer.toString(day);
-        orderselecter = dates+"-"+months+"-"+years ;
+        orderselecter = 00+dates+"-"+months+"-"+years ;
         getdata(orderselecter);
-        date.setText(dates+"/"+months+"/"+years);
+        date.setText(00+dates+"/"+months+"/"+years);
         date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,6 +125,7 @@ public class profile extends Fragment {
             @Override
             public void onClick(View v) {
                 Calendar calendar = Calendar.getInstance();
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
                 year = calendar.get(Calendar.YEAR);
                 years = Integer.toString(year);
                 month = calendar.get(Calendar.MONTH)+1;
@@ -129,8 +135,9 @@ public class profile extends Fragment {
                 datePickerDialog  = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int day) {
-                        date.setText(day+ "/"+ month +"/"+ year);
-                        orderselecter = day+"-"+month+"-"+year ;
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                        date.setText(00+day + "/"+ month +"/"+ year);
+                        orderselecter = 00+day + "-"+month+"-"+year ;
                         orderSorted lv = new orderSorted();
                         Bundle arg = new Bundle();
                         arg.putString("date",orderselecter);
@@ -151,8 +158,8 @@ public class profile extends Fragment {
 
     private void getdata(final String orderselecter) {
         String wow = orderselecter;
-        Query query = db.collection(wow);
-        Toast.makeText(getActivity(), wow, Toast.LENGTH_SHORT).show();
+        Query query = db.collection("Orders").orderBy("date").startAt(wow);
+       // Toast.makeText(getActivity(), wow, Toast.LENGTH_SHORT).show();
         FirestoreRecyclerOptions<ordermodalclass> op = new FirestoreRecyclerOptions.Builder<ordermodalclass>().setQuery(query,ordermodalclass.class).build();
         adapter = new FirestoreRecyclerAdapter<ordermodalclass, orderviewholder>(op) {
             @NonNull
@@ -163,22 +170,35 @@ public class profile extends Fragment {
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull orderviewholder holder, int position, @NonNull final ordermodalclass model) {
-                Glide.with(getActivity()).asBitmap().load(model.getImurl()).into(holder.proimg);
-                holder.name.setText(model.getName());
+            protected void onBindViewHolder(@NonNull final orderviewholder holder, int position, @NonNull final ordermodalclass model) {
+               // Glide.with(getActivity()).asBitmap().load(model.getImurl()).into(holder.proimg);
+                final DocumentReference doc = db.collection("user_data").document(model.getUser_id());
+                doc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()){
+                            DocumentSnapshot documentSnapshot = task.getResult();
+                            holder.name.setText(documentSnapshot.getString("name"));
+                            Glide.with(getActivity()).load(documentSnapshot.getString("img")).into(holder.proimg);
+
+                        }
+                    }
+                });
+               // holder.name.setText(model.getUser_id());
                 holder.time.setText(model.getTime());
                 holder.status.setText(model.getStatus());
-                holder.orderid.setText(model.getOrderid());
+                holder.orderid.setText(model.getOrder_id());
                 holder.ordercard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         orderdetails ord = new orderdetails();
                         Bundle args = new Bundle();
                         args.putString("img",model.getImurl());
-                        args.putString("name",model.getName());
-                        args.putString("orderid",model.getOrderid());
+                        args.putString("name",model.getUser_id());
+                        args.putString("orderid",model.getOrder_id());
                         args.putString("status",model.getStatus());
                         args.putString("date",orderselecter);
+                        args.putString("time",model.getTime());
                         ord.setArguments(args);
                         fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                         fragmentTransaction.replace(R.id.fragment,ord);
@@ -193,7 +213,7 @@ public class profile extends Fragment {
 
                 ordercount = super.getItemCount();
                 if (ordercount == 0){
-                    Toast.makeText(getActivity(), "No orders yet", Toast.LENGTH_SHORT).show();
+                  //  Toast.makeText(getActivity(), "No orders yet", Toast.LENGTH_SHORT).show();
                 }
                 return super.getItemCount();
             }

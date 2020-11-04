@@ -1,8 +1,12 @@
 package com.example.whiteshopingapp;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -13,10 +17,20 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.StorageReference;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -29,9 +43,10 @@ public class orderdetails extends Fragment {
     LinearLayout accl,pacl,outl,devl;
     ImageView acc,pac,out,dev;
     CircleImageView proimage;
-    TextView proname,orderid;
+    TextView proname,orderid,addrview;
     RecyclerView consumedproduct;
-    String nameget,orderidget,imgurlget,statusget,date;
+    private FirestoreRecyclerAdapter adapter;
+    String nameget,orderidget,imgurlget,statusget,date,time;
     private FirebaseFirestore db;
 
     // TODO: Rename parameter arguments, choose names that match
@@ -79,6 +94,7 @@ public class orderdetails extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_orderdetails, container, false);
+        final address address = new address(getActivity());
         consumedproduct = v.findViewById(R.id.consumedproduct);
         db = FirebaseFirestore.getInstance();
         acc = v.findViewById(R.id.accept);
@@ -89,6 +105,7 @@ public class orderdetails extends Fragment {
         pacl = v.findViewById(R.id.packlayout);
         outl = v.findViewById(R.id.outfordeliverylayout);
         devl = v.findViewById(R.id.deliveredlayout);
+        addrview = v.findViewById(R.id.adressview);
         proimage = v.findViewById(R.id.userproimg);
         proname = v.findViewById(R.id.userproname);
         orderid = v.findViewById(R.id.orderid);
@@ -97,22 +114,44 @@ public class orderdetails extends Fragment {
         orderidget = getArguments().getString("orderid");
         statusget = getArguments().getString("status");
         date = getArguments().getString("date");
-        Glide.with(getActivity()).load(imgurlget).into(proimage);
-        proname.setText(nameget);
+        time = getArguments().getString("time");
+        userdatamodalclass userdatamodalclass = new userdatamodalclass();
+        final DocumentReference doc = db.collection("user_data").document(nameget);
+        doc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                    DocumentSnapshot documentSnapshot = task.getResult();
+                 proname.setText(documentSnapshot.getString("name"));
+                 Glide.with(getActivity()).load(documentSnapshot.getString("img")).into(proimage);
+                }
+            }
+        });
+
+//        proname.setText(nameget);
         orderid.setText(orderidget);
-        if (statusget.equals("accepted")){
+        addrview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               // address.showaddres(nameget);
+                Intent call = new Intent(Intent.ACTION_CALL);
+                call.setData(Uri.parse("8129413361"));
+                getActivity().startActivity(call);
+            }
+        });
+        if (statusget.equals("Accepted")){
             acc.setVisibility(View.VISIBLE);
         }
-        else if (statusget.equals("packed")){
+        else if (statusget.equals("Packed")){
             acc.setVisibility(View.VISIBLE);
             pac.setVisibility(View.VISIBLE);
         }
-        else if (statusget.equals("out for delivery")){
+        else if (statusget.equals("Out for delivery")){
             acc.setVisibility(View.VISIBLE);
             pac.setVisibility(View.VISIBLE);
             out.setVisibility(View.VISIBLE);
         }
-        else if (statusget.equals("delivered")){
+        else if (statusget.equals("Delivered")){
             acc.setVisibility(View.VISIBLE);
             pac.setVisibility(View.VISIBLE);
             out.setVisibility(View.VISIBLE);
@@ -121,8 +160,11 @@ public class orderdetails extends Fragment {
        accl.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
-               ordermodalclass upload = new ordermodalclass(imgurlget,nameget,null,orderidget,"accepted");
-               db.collection(date).document(orderidget).set(upload, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+               //ordermodalclass upload = new ordermodalclass(imgurlget,orderidget,"accepted",nameget,date,time);
+               Map<String,Object>upload = new HashMap<>();
+               upload.put("Status","Accepted");
+               db.collection("user_data").document(nameget).collection("Orders").document(orderidget).set(upload,SetOptions.merge());
+               db.collection("Orders").document(orderidget).set(upload, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                    @Override
                    public void onSuccess(Void aVoid) {
                        acc.setVisibility(View.VISIBLE);
@@ -134,8 +176,11 @@ public class orderdetails extends Fragment {
         pacl.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
-               ordermodalclass upload = new ordermodalclass(imgurlget,nameget,null,orderidget,"packed");
-               db.collection(date).document(orderidget).set(upload, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+               //ordermodalclass upload = new ordermodalclass(imgurlget,orderidget,"packed",nameget,date,time);
+               Map<String,Object>upload = new HashMap<>();
+               upload.put("Status","Packed");
+               db.collection("user_data").document(nameget).collection("Orders").document(orderidget).set(upload,SetOptions.merge());
+               db.collection("Orders").document(orderidget).set(upload, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                    @Override
                    public void onSuccess(Void aVoid) {
                        pac.setVisibility(View.VISIBLE);
@@ -147,8 +192,11 @@ public class orderdetails extends Fragment {
         outl.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
-               ordermodalclass upload = new ordermodalclass(imgurlget,nameget,null,orderidget,"out for delivery");
-               db.collection(date).document(orderidget).set(upload, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+               //ordermodalclass upload = new ordermodalclass(imgurlget,orderidget,"out for delivery",nameget,date,time);
+               Map<String,Object>upload = new HashMap<>();
+               upload.put("Status","Out for delivery");
+               db.collection("user_data").document(nameget).collection("Orders").document(orderidget).set(upload,SetOptions.merge());
+               db.collection("Orders").document(orderidget).set(upload, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                    @Override
                    public void onSuccess(Void aVoid) {
                        out.setVisibility(View.VISIBLE);
@@ -160,8 +208,11 @@ public class orderdetails extends Fragment {
         devl.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
-               ordermodalclass upload = new ordermodalclass(imgurlget,nameget,null,orderidget,"delivered");
-               db.collection(date).document(orderidget).set(upload, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+               //ordermodalclass upload = new ordermodalclass(imgurlget,orderidget,"delivered",nameget,date,time);
+               Map<String,Object>upload = new HashMap<>();
+               upload.put("Status","Delivered");
+               db.collection("user_data").document(nameget).collection("Orders").document(orderidget).set(upload,SetOptions.merge());
+               db.collection("Orders").document(orderidget).set(upload, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                    @Override
                    public void onSuccess(Void aVoid) {
                        dev.setVisibility(View.VISIBLE);
@@ -170,7 +221,49 @@ public class orderdetails extends Fragment {
 
            }
        });
+        Query query = db.collection("Orders").document(orderidget).collection("Items");
+        FirestoreRecyclerOptions<itemsmodelclass> op = new FirestoreRecyclerOptions.Builder<itemsmodelclass>().setQuery(query,itemsmodelclass.class).build();
+        adapter = new FirestoreRecyclerAdapter<itemsmodelclass, itemsviewholder>(op) {
+            @NonNull
+            @Override
+            public itemsviewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.items,parent,false);
+                return new itemsviewholder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull itemsviewholder holder, int position, @NonNull itemsmodelclass model) {
+                holder.product.setText(model.getProduct());
+                String c = Long.toString(model.getCount());
+                holder.quant.setText(c);
+
+            }
+        };
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        consumedproduct.setHasFixedSize(true);
+        consumedproduct.setLayoutManager(layoutManager);
+        consumedproduct.setAdapter(adapter);
 
         return v;
+    }
+
+    private class itemsviewholder extends RecyclerView.ViewHolder {
+        TextView product,quant;
+        public itemsviewholder(@NonNull View itemView) {
+            super(itemView);
+            product = itemView.findViewById(R.id.itemsname);
+            quant = itemView.findViewById(R.id.itemqunt);
+        }
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        adapter.startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        adapter.startListening();
     }
 }

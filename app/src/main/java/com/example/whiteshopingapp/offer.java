@@ -26,6 +26,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
@@ -50,7 +51,7 @@ public class offer extends Fragment {
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri filepath,downloadUrl;
     private String imagename;
-    private String activity;
+    private String activity,susses ="not";
     private int limitoffers,limithome;
     Loadingadapter loadingadapter;
 
@@ -298,6 +299,7 @@ public class offer extends Fragment {
 
             }
             if (activity.equals("offer")){
+
                 final StorageReference riversRef = mStorageRef.child("offerscreenbanner/" +random);
                 riversRef.putFile(filepath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override

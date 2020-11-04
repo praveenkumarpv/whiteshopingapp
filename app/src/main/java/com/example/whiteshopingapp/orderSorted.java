@@ -16,6 +16,10 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
@@ -80,7 +84,7 @@ public class orderSorted extends Fragment {
         db = FirebaseFirestore.getInstance();
         String orderkey = getArguments().getString("date");
         Toast.makeText(getActivity(), orderkey, Toast.LENGTH_SHORT).show();
-        Query query = db.collection(orderkey);
+        Query query = db.collection("Orders").orderBy("date").startAt(orderkey);
         Toast.makeText(getActivity(), orderkey, Toast.LENGTH_SHORT).show();
         FirestoreRecyclerOptions<ordermodalclass> op = new FirestoreRecyclerOptions.Builder<ordermodalclass>().setQuery(query,ordermodalclass.class).build();
         adapter = new FirestoreRecyclerAdapter<ordermodalclass, sortviewholder>(op) {
@@ -92,12 +96,24 @@ public class orderSorted extends Fragment {
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull sortviewholder holder, int position, @NonNull ordermodalclass model) {
-                Glide.with(getActivity()).asBitmap().load(model.getImurl()).into(holder.proimg);
-                holder.name.setText(model.getName());
+            protected void onBindViewHolder(@NonNull final sortviewholder holder, int position, @NonNull ordermodalclass model) {
+                final DocumentReference doc = db.collection("user_data").document(model.getUser_id());
+                doc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()){
+                            DocumentSnapshot documentSnapshot = task.getResult();
+                            holder.name.setText(documentSnapshot.getString("name"));
+                            Glide.with(getActivity()).load(documentSnapshot.getString("img")).into(holder.proimg);
+
+                        }
+                    }
+                });
+               // Glide.with(getActivity()).asBitmap().load(model.getImurl()).into(holder.proimg);
+               // holder.name.setText(model.getUser_id());
                 holder.time.setText(model.getTime());
                 holder.status.setText(model.getStatus());
-                holder.orderid.setText(model.getOrderid());
+                holder.orderid.setText(model.getOrder_id());
             }
 
             @Override

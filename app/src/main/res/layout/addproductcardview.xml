@@ -6,13 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="200dp"
     android:layout_marginStart="1dp"
-    android:layout_marginEnd="1dp"
     android:layout_marginTop="5dp">
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="1dp"
         android:layout_marginEnd="5dp"
         android:layout_marginBottom="5dp"
         android:background="@drawable/addphotobackbg"
@@ -35,19 +34,19 @@
                 android:id="@+id/productimage"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="0.5"
+                android:layout_weight="0.6"
                 android:src="@drawable/productphoto" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="0.9"
+                android:layout_weight="0.7"
                 android:orientation="vertical">
                 <Button
                     android:id="@+id/editbutton"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.5"
+                    android:layout_weight="0.6"
                     android:text="EDIT"
                     android:background="@drawable/addphotobackbg"
                     android:layout_marginEnd="10dp"
@@ -57,17 +56,17 @@
                    android:id="@+id/productnames"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="0.5"
+                android:layout_weight="0.4"
                 android:text="product name"
                 android:gravity="center" 
-                   android:layout_marginStart="5dp"
-                   android:layout_marginEnd="5dp"
-                android:autoSizeTextType="uniform"
+                   android:layout_marginStart="1dp"
+                   android:layout_marginEnd="1dp"
+                android:textSize="12dp"
                    android:textColor="#000"/> 
                 <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="0.5" 
+                android:layout_weight="0.6"
                     android:orientation="horizontal">
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -89,8 +88,8 @@
                             android:layout_weight="0.5"
                             android:autoSizeTextType="uniform"
                             android:text="offerprice"
-                            android:paddingStart="5dp"
-                            android:paddingEnd="5dp"
+                            android:paddingStart="1dp"
+                            android:paddingEnd="2dp"
                             android:textColor="#000"/>
 
                     </LinearLayout>
@@ -105,8 +104,8 @@
                         android:background="@drawable/strickline"
                         android:autoSizeTextType="uniform"
                         android:gravity="center"
-                        android:paddingEnd="5dp"
-                        android:paddingStart="5dp"
+                        android:paddingEnd="2dp"
+                        android:paddingStart="2dp"
                         />
                 </LinearLayout>
             </LinearLayout>
