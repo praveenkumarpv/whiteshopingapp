@@ -35,7 +35,7 @@ public class cataddadpter extends Addproducts {
         this.activity = activity;
     }
     void startadding(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         LayoutInflater inflater = activity.getLayoutInflater();
         View view =inflater.inflate(R.layout.addcatogery,null);
         mStorageRef = FirebaseStorage.getInstance().getReference();
@@ -50,8 +50,12 @@ public class cataddadpter extends Addproducts {
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 activity.startActivityForResult(intent,PICK_IMAGE_REQUEST);
-                filepath = intent.getData();
-                Glide.with(activity).load(filepath).into(catimage);
+                //filepath = intent.getData();
+                //Glide.with().load(filepath).into(catimage);
+                if (filepath.equals(null)){
+                    Toast.makeText(activity, "fuckon", Toast.LENGTH_SHORT).show();
+
+                }
 
 
 
@@ -84,7 +88,11 @@ public class cataddadpter extends Addproducts {
                 RESULT_OK
                 && data != null && data.getData() != null) {
             filepath = data.getData();
-            Glide.with(activity).load(filepath).into(catimage);
+            return;
+//            Glide.with(activity).load(filepath).into(catimage);
+//            if (filepath.equals(null)){
+//                Toast.makeText(activity, "fuckoff", Toast.LENGTH_SHORT).show();
+//            }
 
     }
 }

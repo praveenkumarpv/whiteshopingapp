@@ -133,10 +133,8 @@ public class orderdetails extends Fragment {
         addrview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // address.showaddres(nameget);
-                Intent call = new Intent(Intent.ACTION_CALL);
-                call.setData(Uri.parse("8129413361"));
-                getActivity().startActivity(call);
+                address.showaddres(nameget);
+
             }
         });
         if (statusget.equals("Accepted")){

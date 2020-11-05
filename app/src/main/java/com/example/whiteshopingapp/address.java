@@ -69,8 +69,19 @@ public class address extends orderdetails {
             @Override
             public void onClick(View v) {
                 Intent call = new Intent(Intent.ACTION_CALL);
-                call.setData(Uri.parse("8129413361"));
+                call.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                call.setData(Uri.parse("tel:"+ p1));
                 activity.startActivity(call);
+            }
+        });
+        ca2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent call = new Intent(Intent.ACTION_CALL);
+                call.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                call.setData(Uri.parse("tel:"+ p2));
+                activity.startActivity(call);
+
             }
         });
 
