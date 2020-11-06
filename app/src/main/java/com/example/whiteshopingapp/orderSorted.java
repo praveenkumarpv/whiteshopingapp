@@ -82,7 +82,12 @@ public class orderSorted extends Fragment {
         View view = inflater.inflate(R.layout.fragment_order_sorted, container, false);
         sorted = view.findViewById(R.id.ordersorted);
         db = FirebaseFirestore.getInstance();
-        String orderkey = getArguments().getString("date");
+        int a = 00;
+        int day = getArguments().getInt("day")+a;
+        int month = getArguments().getInt("month");
+        int year = getArguments().getInt("year");
+        String dates = Integer.toString(00+day);
+        String orderkey = day+"-"+month+"-"+year;
         Toast.makeText(getActivity(), orderkey, Toast.LENGTH_SHORT).show();
         Query query = db.collection("Orders").orderBy("date").startAt(orderkey);
         Toast.makeText(getActivity(), orderkey, Toast.LENGTH_SHORT).show();

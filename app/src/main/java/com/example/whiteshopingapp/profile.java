@@ -135,12 +135,13 @@ public class profile extends Fragment {
                 datePickerDialog  = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int day) {
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-                        date.setText(00+day + "/"+ month +"/"+ year);
-                        orderselecter = 00+day + "-"+month+"-"+year ;
+                        //date.setText(day + "/"+ month +"/"+ year);
+                      // Toast.makeText(getContext(), orderselecter, Toast.LENGTH_SHORT).show();
                         orderSorted lv = new orderSorted();
                         Bundle arg = new Bundle();
-                        arg.putString("date",orderselecter);
+                        arg.putInt("day",day);
+                        arg.putInt("month",month);
+                        arg.putInt("year",year);
                         lv.setArguments(arg);
                         fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                         fragmentTransaction.replace(R.id.fragment,lv);
