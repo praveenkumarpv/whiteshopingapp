@@ -32,6 +32,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.Year;
 import java.util.Calendar;
@@ -105,6 +106,7 @@ public class profile extends Fragment {
         date = v.findViewById(R.id.datepicer);
         drop = v.findViewById(R.id.datepickerimage);
         order = v.findViewById(R.id.orderview);
+        DecimalFormat decimalFormat = new DecimalFormat("00");
        Calendar calendar = Calendar.getInstance();
         year = calendar.get(Calendar.YEAR);
         years = Integer.toString(year);
@@ -112,9 +114,9 @@ public class profile extends Fragment {
         months = Integer.toString(month);
         day = calendar.get(Calendar.DAY_OF_MONTH);
         dates = Integer.toString(day);
-        orderselecter = 00+dates+"-"+months+"-"+years ;
+        orderselecter = dates+"/"+months+"/"+years ;
         getdata(orderselecter);
-        date.setText(00+dates+"/"+months+"/"+years);
+        date.setText(dates+"/"+months+"/"+years);
         date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -159,7 +161,7 @@ public class profile extends Fragment {
 
     private void getdata(final String orderselecter) {
         String wow = orderselecter;
-        Query query = db.collection("Orders").orderBy("date").startAt(wow);
+        Query query = db.collection("Orders").whereEqualTo("date",wow);
        // Toast.makeText(getActivity(), wow, Toast.LENGTH_SHORT).show();
         FirestoreRecyclerOptions<ordermodalclass> op = new FirestoreRecyclerOptions.Builder<ordermodalclass>().setQuery(query,ordermodalclass.class).build();
         adapter = new FirestoreRecyclerAdapter<ordermodalclass, orderviewholder>(op) {
