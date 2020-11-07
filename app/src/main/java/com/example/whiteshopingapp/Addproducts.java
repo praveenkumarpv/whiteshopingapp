@@ -52,7 +52,7 @@ public class Addproducts extends Fragment {
     private Spinner quant,cat;
     private FirebaseFirestore db;
     public  String [] quntity = new String[]{"Quantity","Kilogram","Gram","Liter"};
-    public  String [] category = new String[]{"Household Items","Kitchen & Dining Needs","Snacks,Biscuits & Chocolate","Beverages","Grocery & Fruits","Personal care","Household Items","Add new category"};
+    public  String [] category = new String[]{"Household Items","Kitchen & Dining Needs","Snacks,Biscuits & Chocolate","Beverages","Grocery & Fruits","Personal care","Household Items","School"};
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
