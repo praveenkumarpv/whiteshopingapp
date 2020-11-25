@@ -2,11 +2,15 @@ package com.example.whiteshopingapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.Manifest;
 import android.content.SharedPreferences;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
@@ -23,10 +27,19 @@ public class mainscreen extends AppCompatActivity {
     FragmentTransaction fragmentTransaction;
     boolean doubleBackToExitPressedOnce = false;
     int count = 0;
+    private static final int REQUEST_PHONE_CALL = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainscreen);
+        getSupportActionBar().hide();
+        if (ContextCompat.checkSelfPermission(mainscreen.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(mainscreen.this, new String[]{Manifest.permission.CALL_PHONE},REQUEST_PHONE_CALL);
+        }
+        else
+        {
+            //startActivity(intent);
+        }
 
         fragment = new home();
         fragmenttransation(fragment);

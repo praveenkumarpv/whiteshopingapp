@@ -202,6 +202,7 @@ public class profile extends Fragment {
                         args.putString("status",model.getStatus());
                         args.putString("date",orderselecter);
                         args.putString("time",model.getTime());
+                        args.putString("total",model.getTotalAmount());
                         ord.setArguments(args);
                         fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                         fragmentTransaction.replace(R.id.fragment,ord);

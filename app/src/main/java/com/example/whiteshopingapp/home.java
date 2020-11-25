@@ -25,6 +25,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import java.util.ArrayList;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link home#newInstance} factory method to
@@ -133,10 +135,10 @@ public class home extends Fragment {
                         args.putString("quanty",modalclass.getQuantity());
                         args.putString("stock",modalclass.getStock());
                         args.putString("offerpercentage",modalclass.getOffpers());
-                        args.putString("category",modalclass.getCategory());
                         args.putString("delivery",modalclass.getDeliverycharge());
                         args.putString("image",modalclass.getImurl());
                         args.putString("imagename",modalclass.getImagename());
+                        args.putStringArrayList("arraylist", (ArrayList<String>) modalclass.getCatogary());
                         lb.setArguments(args);
                         fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                         fragmentTransaction.replace(R.id.fragment,lb);

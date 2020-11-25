@@ -1,5 +1,7 @@
 package com.example.whiteshopingapp;
 
+import java.util.List;
+
 public class Modalclass {
     private String productname;
     private String imurl;
@@ -10,10 +12,13 @@ public class Modalclass {
     private String offpers;
     private String deliverycharge;
     private String imagename;
-    private String category;
+    private List<String> catogary;
+    private List<String> tags;
+
     private  Modalclass(){}
 
-    public Modalclass(String productname,String imurl, String mrp, String offprice, String quantity, String stock, String offpers, String deliverycharge,String imagename,String category) {
+    public Modalclass(String productname,String imurl, String mrp, String offprice, String quantity, String stock,
+                      String offpers, String deliverycharge,String imagename,List<String> catogary,List<String> tags) {
         this.productname = productname;
         this.imurl = imurl;
         this.mrp = mrp;
@@ -23,7 +28,8 @@ public class Modalclass {
         this.offpers = offpers;
         this.deliverycharge = deliverycharge;
         this.imagename =imagename;
-        this.category = category;
+        this.catogary = catogary;
+        this.tags = tags;
     }
 
     public String getImurl() {
@@ -88,19 +94,27 @@ public class Modalclass {
         this.imagename = imagename;
     }
 
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
     public String getProductname() {
         return productname;
     }
 
     public void setProductname(String productname) {
         this.productname = productname;
+    }
+
+    public List<String> getCatogary() {
+        return catogary;
+    }
+
+    public void setCatogary(List<String> catogary) {
+        this.catogary = catogary;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 }

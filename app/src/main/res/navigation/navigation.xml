@@ -28,5 +28,14 @@
         android:id="@+id/addproducts2"
         android:name="com.example.whiteshopingapp.Addproducts"
         android:label="fragment_addproducts"
-        tools:layout="@layout/fragment_addproducts" />
+        tools:layout="@layout/fragment_addproducts" >
+        <action
+            android:id="@+id/action_addproducts2_to_categoryadd"
+            app:destination="@id/categoryadd" />
+    </fragment>
+    <fragment
+        android:id="@+id/categoryadd"
+        android:name="com.example.whiteshopingapp.categoryadd"
+        android:label="categoryadd_fragment"
+        tools:layout="@layout/categoryadd_fragment" />
 </navigation>

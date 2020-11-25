@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -68,19 +69,31 @@ public class address extends orderdetails {
         ca1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent call = new Intent(Intent.ACTION_CALL);
-                call.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                call.setData(Uri.parse("tel:"+ p1));
-                activity.startActivity(call);
+                if (p1 != null){
+                    Intent call = new Intent(Intent.ACTION_CALL);
+                    call.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    call.setData(Uri.parse("tel:"+ p1));
+                    activity.startActivity(call);
+                }
+                else{
+                    Toast.makeText(activity, "Invalied number", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
         ca2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent call = new Intent(Intent.ACTION_CALL);
-                call.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                call.setData(Uri.parse("tel:"+ p2));
-                activity.startActivity(call);
+                if (p2 != null){
+                    Intent call = new Intent(Intent.ACTION_CALL);
+                    call.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    call.setData(Uri.parse("tel:"+ p2));
+                    activity.startActivity(call);
+                }
+                else{
+                    Toast.makeText(activity, "Invalied number", Toast.LENGTH_SHORT).show();
+                }
+
 
             }
         });

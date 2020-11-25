@@ -7,17 +7,27 @@ public class ordermodalclass {
     private String User_id;
     private String date;
     private String time;
+    private String TotalAmount;
 
     public ordermodalclass() {
     }
 
-    public ordermodalclass(String imurl, String order_id, String status, String user_id, String date, String time) {
+    public ordermodalclass(String imurl, String order_id, String status, String user_id, String date, String time,String TotalAmount) {
         this.imurl = imurl;
-        Order_id = order_id;
-        Status = status;
-        User_id = user_id;
+        this.Order_id = order_id;
+        this.Status = status;
+        this.User_id = user_id;
         this.date = date;
         this.time = time;
+        this.TotalAmount = TotalAmount;
+    }
+
+    public String getTotalAmount() {
+        return TotalAmount;
+    }
+
+    public void setTotalAmount(String totalAmount) {
+        TotalAmount = totalAmount;
     }
 
     public String getImurl() {

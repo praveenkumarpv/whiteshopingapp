@@ -1,6 +1,7 @@
 package com.example.whiteshopingapp;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -8,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,19 +21,27 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import static android.app.Activity.RESULT_OK;
@@ -46,15 +57,18 @@ public class editproduct extends Fragment {
     private StorageReference mStorageRef;
     private ImageView prdtimseled;
     private Button updates,delets;
-    private EditText produed, priceed,offped,deliveryed,stocked,offpered;
+    private EditText produed, priceed,offped,deliveryed,stocked;
     private Spinner quanted,cated;
-    TextView qunt,catet;
-    private String deliveryfee,imagename,product,mrp,off,quanty,stock,offerpercent,categ,delivery,imageurl;
-    private Uri downloadUrl;
+    private TextView qunt,catet;
+    private String deliveryfee,imagename,product,mrp,off,quanty,stock,offerpercent,delivery,imageurl;
+    private Uri downloadUrl,im;
     private FirebaseFirestore db;
+    private  Integer i=0,curr;
+    private FirestoreRecyclerAdapter adapter1;
+    private RecyclerView catreed;
     private FragmentTransaction fragmentTransaction;
-    public  String [] quntity = new String[]{"KG","GM","LTR"};
-    public  String [] category = new String[]{"KG","GM","LTR"};
+    public  String [] quntity = new String[]{"Quantity","Kilogram","Gram","Liter"};
+    public  String [] category = new String[9];
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -102,12 +116,32 @@ public class editproduct extends Fragment {
         if (requestCode == PICK_IMAGE_REQUEST && resultCode ==
                 RESULT_OK
                 && data != null && data.getData() != null) {
-            filepath = data.getData();
-            Glide.with(this)
-                    .load(filepath)
-                    .into(prdtimseled);
+            im = data.getData();
+            startcroping(im);
+//            Glide.with(this)
+//                    .load(filepath)
+//                    .into(prdtimseled);
 
         }
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            //Toast.makeText(getActivity(), "cp", Toast.LENGTH_SHORT).show();
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                filepath = result.getUri();
+                Glide.with(this).load(filepath).into(prdtimseled);
+                //Toast.makeText(getActivity(), "Cropping successful, Sample: " + result.getSampleSize(), Toast.LENGTH_LONG).show();
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Toast.makeText(getActivity(), "Cropping failed: " + result.getError(), Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+    private void startcroping(Uri im) {
+        CropImage.activity(im)
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .setMultiTouchEnabled(true)
+                .start(getContext(),this);
+
+
     }
 
     @Override
@@ -124,36 +158,30 @@ public class editproduct extends Fragment {
         quanted = v.findViewById(R.id.qun);
         deliveryed =v.findViewById(R.id.dvched);
         stocked = v.findViewById(R.id.stocksed);
-        offpered = v.findViewById(R.id.offpered);
-        cated = v.findViewById(R.id.catg);
         updates = v.findViewById(R.id.upload);
         delets = v.findViewById(R.id.delet);
         updates = v.findViewById(R.id.update);
         qunt = v.findViewById(R.id.quntext);
-        catet = v.findViewById(R.id.catgtext);
+        catreed = v.findViewById(R.id.catselectioned);
         product = getArguments().getString("productname");
         mrp = getArguments().getString("price");
         off = getArguments().getString("offerprice");
         quanty = getArguments().getString("quanty");
         stock = getArguments().getString("stock");
         offerpercent = getArguments().getString("offerpercentage");
-        categ = getArguments().getString("category");
         delivery = getArguments().getString("delivery");
         imageurl = getArguments().getString("image");
         imagename = getArguments().getString("imagename");
+
         produed.setText(product);
         priceed.setText(mrp);
         offped.setText(off);
         qunt.setText(quanty);
         deliveryed.setText(delivery);
         stocked.setText(stock);
-        offpered.setText(offerpercent);
-        catet.setText(categ);
         Glide.with(getActivity()).asBitmap().load(imageurl).into(prdtimseled);
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line,quntity);
         quanted.setAdapter(adapter);
-        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line,category);
-        cated.setAdapter(adapter1);
         quanted.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -165,15 +193,11 @@ public class editproduct extends Fragment {
                 qunt.setText(quanty);
             }
         });
-        cated.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        qunt.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                catet.setText(cated.getSelectedItem().toString());
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                catet.setText(categ);
+            public void onClick(View v) {
+                quanted.setVisibility(View.VISIBLE);
+                qunt.setVisibility(View.GONE);
             }
         });
 
@@ -186,6 +210,37 @@ public class editproduct extends Fragment {
                 startActivityForResult(intent, PICK_IMAGE_REQUEST);
             }
         });
+        Query query = db.collection("categories");
+        FirestoreRecyclerOptions<cataddmodal> op = new FirestoreRecyclerOptions.Builder<cataddmodal>().setQuery(query,cataddmodal.class).build();
+        adapter1 = new FirestoreRecyclerAdapter<cataddmodal, catedholder>(op) {
+            @NonNull
+            @Override
+            public catedholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View views = LayoutInflater.from(parent.getContext()).inflate(R.layout.catselection,parent,false);
+                return new catedholder(views);
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull final catedholder holder, int position, @NonNull final cataddmodal model) {
+                Glide.with(getContext()).load(model.getImageurl()).into(holder.cati);
+                holder.catn.setText(model.getCatName());
+                holder.c.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        category[i]= model.getCatName();
+                        i++;
+                        //curr++;
+                        holder.c.setBackgroundColor(Color.GRAY);
+                        // String j = String.valueOf(i);
+                        // Toast.makeText(getActivity(), category[--i], Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        };
+        LinearLayoutManager li = new LinearLayoutManager(getContext(),RecyclerView.HORIZONTAL,false);
+        catreed.setHasFixedSize(true);
+        catreed.setLayoutManager(li);
+        catreed.setAdapter(adapter1);
         delets.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -215,6 +270,7 @@ public class editproduct extends Fragment {
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                        loadingadapter.finishloading();
                         Toast.makeText(getActivity(), "Error Occured", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -225,12 +281,18 @@ public class editproduct extends Fragment {
             @Override
             public void onClick(View v) {
                 loadingadapter.startloading();
+                final List<String> catogary = Arrays.asList(category);
                 if (filepath == null){
+                    float p  = Float.valueOf(priceed.getText().toString()).floatValue();
+                    float o  = Float.valueOf(offped.getText().toString()).floatValue();
+                    float total = ((p-o)/p)*100;
+                    int tto = (int) total;
+                    String offerpersents = Integer.toString(tto);
                     if (deliveryed.getText().toString().trim().isEmpty()){
                         deliveryfee = "Free";
                     }
                     Modalclass upload = new Modalclass(produed.getText().toString().trim(),imageurl,priceed.getText().toString().trim(),offped.getText().toString().trim(),quanted.getSelectedItem().toString(),
-                            stocked.getText().toString().trim(),offpered.getText().toString().trim(),deliveryfee,imagename,cated.getSelectedItem().toString().trim());
+                            stocked.getText().toString().trim(),offerpersents,deliveryfee,imagename,catogary,null);
                     db.collection("products").document(imagename).set(upload, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -246,37 +308,54 @@ public class editproduct extends Fragment {
                     });
                 }
                 else {
-
-                    final String random = UUID.randomUUID().toString();
-                    final StorageReference riversRef = mStorageRef.child("Productimages/" +random);
-                    riversRef.putFile(filepath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    StorageReference desertRef = mStorageRef.child("Productimages/" +imagename);
+                    desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            riversRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        public void onSuccess(Void aVoid) {
+                            final StorageReference riversRef = mStorageRef.child("Productimages/" +imagename);
+                            riversRef.putFile(filepath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                 @Override
-                                public void onSuccess(Uri uri) {
-                                    downloadUrl = uri;
-                                    String downloadUrls = downloadUrl.toString();
-                                    String accesstoken = random;
-                                    if (deliveryed.getText().toString().trim().isEmpty()){
-                                        deliveryfee = "Free";
-                                    }
-                                    Modalclass upload = new Modalclass(produed.getText().toString().trim(),downloadUrls,priceed.getText().toString().trim(),offped.getText().toString().trim(),quanted.getSelectedItem().toString().trim(),
-                                            stocked.getText().toString().trim(),offpered.getText().toString().trim(),deliveryfee,accesstoken,cated.getSelectedItem().toString().trim());
-                                    db.collection("products").document(imagename).set(upload, SetOptions.merge())
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    loadingadapter.finishloading();
-                                                    Toast.makeText(getActivity(), "Updated", Toast.LENGTH_SHORT).show();
-                                                }
-                                            }).addOnFailureListener(new OnFailureListener() {
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    riversRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                         @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            loadingadapter.finishloading();
-                                            Toast.makeText(getActivity(), "Update Failed", Toast.LENGTH_SHORT).show();
+                                        public void onSuccess(Uri uri) {
+                                            downloadUrl = uri;
+                                            String downloadUrls = downloadUrl.toString();
+                                            String accesstoken = imagename;
+                                            float p  = Float.valueOf(priceed.getText().toString()).floatValue();
+                                            float o  = Float.valueOf(offped.getText().toString()).floatValue();
+                                            float total = ((p-o)/p)*100;
+                                            int tto = (int) total;
+                                            String offerpersented = Integer.toString(tto);
+                                            if (deliveryed.getText().toString().trim().isEmpty()){
+                                                deliveryfee = "Free";
+                                            }
+                                            Modalclass upload = new Modalclass(produed.getText().toString().trim(),downloadUrls,priceed.getText().toString().trim(),
+                                                    offped.getText().toString().trim(),quanted.getSelectedItem().toString().trim(),
+                                                    stocked.getText().toString().trim(),offerpersented,deliveryfee,accesstoken,catogary,null);
+                                            db.collection("products").document(imagename).set(upload, SetOptions.merge())
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            loadingadapter.finishloading();
+                                                            Toast.makeText(getActivity(), "Updated", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    }).addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    loadingadapter.finishloading();
+                                                    Toast.makeText(getActivity(), "Update Failed", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+
                                         }
                                     });
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(getActivity(), "Error Occured in update", Toast.LENGTH_SHORT).show();
+                                    loadingadapter.finishloading();
 
                                 }
                             });
@@ -284,15 +363,39 @@ public class editproduct extends Fragment {
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(getActivity(), "Error Occured", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Error in img delete", Toast.LENGTH_SHORT).show();
                             loadingadapter.finishloading();
-
                         }
                     });
+
                 }
 
             }
         });
         return  v;
     }
+    private class catedholder extends RecyclerView.ViewHolder {
+        ImageView cati;
+        TextView catn;
+        LinearLayout c;
+        public catedholder(@NonNull View itemView) {
+            super(itemView);
+            cati = itemView.findViewById(R.id.catimg);
+            catn = itemView.findViewById(R.id.catname);
+            c = itemView.findViewById(R.id.catfull);
+        }
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        adapter1.startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        adapter1.stopListening();
+    }
+
+
 }

@@ -1,19 +1,40 @@
 package com.example.whiteshopingapp;
 
 public class cataddmodal {
-    String catname;
+   private String catName;
+   private String imageurl;
+   private Integer No;
+
     public cataddmodal() {
     }
 
-    public cataddmodal(String catname) {
-        this.catname = catname;
+    public cataddmodal(String catName, String imageurl, Integer no) {
+        this.catName = catName;
+        this.imageurl = imageurl;
+        No = no;
     }
 
-    public String getCatname() {
-        return catname;
+    public String getCatName() {
+        return catName;
     }
 
-    public void setCatname(String catname) {
-        this.catname = catname;
+    public void setCatName(String catName) {
+        this.catName = catName;
+    }
+
+    public String getImageurl() {
+        return imageurl;
+    }
+
+    public void setImageurl(String imageurl) {
+        this.imageurl = imageurl;
+    }
+
+    public Integer getNo() {
+        return No;
+    }
+
+    public void setNo(Integer no) {
+        No = no;
     }
 }

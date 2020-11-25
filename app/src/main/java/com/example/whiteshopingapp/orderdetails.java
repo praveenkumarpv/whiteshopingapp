@@ -43,10 +43,10 @@ public class orderdetails extends Fragment {
     LinearLayout accl,pacl,outl,devl;
     ImageView acc,pac,out,dev;
     CircleImageView proimage;
-    TextView proname,orderid,addrview;
+    TextView proname,orderid,addrview,tot;
     RecyclerView consumedproduct;
     private FirestoreRecyclerAdapter adapter;
-    String nameget,orderidget,imgurlget,statusget,date,time;
+    String nameget,orderidget,imgurlget,statusget,date,time,total;
     private FirebaseFirestore db;
 
     // TODO: Rename parameter arguments, choose names that match
@@ -109,13 +109,15 @@ public class orderdetails extends Fragment {
         proimage = v.findViewById(R.id.userproimg);
         proname = v.findViewById(R.id.userproname);
         orderid = v.findViewById(R.id.orderid);
+        tot = v.findViewById(R.id.totalamount);
         nameget = getArguments().getString("name");
         imgurlget = getArguments().getString("img");
         orderidget = getArguments().getString("orderid");
         statusget = getArguments().getString("status");
         date = getArguments().getString("date");
         time = getArguments().getString("time");
-        userdatamodalclass userdatamodalclass = new userdatamodalclass();
+        total = getArguments().getString("total");
+        tot.setText(total);
         final DocumentReference doc = db.collection("user_data").document(nameget);
         doc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
