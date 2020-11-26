@@ -63,7 +63,7 @@ public class editproduct extends Fragment {
     private String deliveryfee,imagename,product,mrp,off,quanty,stock,offerpercent,delivery,imageurl;
     private Uri downloadUrl,im;
     private FirebaseFirestore db;
-    private  Integer i=0,curr=9,j,k,sellection = 0;
+    private  Integer i=0,curr=9,j,k;
     private FirestoreRecyclerAdapter adapter1;
     private RecyclerView catreed;
     private FragmentTransaction fragmentTransaction;
@@ -281,36 +281,27 @@ public class editproduct extends Fragment {
         updates.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String tag = produed.getText().toString().trim();
+                int sellection = 0;
+                String tag = produed.getText().toString().trim().toLowerCase();
                 int sl = tag.length();
                 final String[] temp = tag.split(" ");
                 int l = temp.length;
                 int pp = 0;
                 String hint;
-                if (sellection == 0) {
-                    for (k = 0; k < l; k++) {
-                        String tem = temp[k];
-                        int teml = tem.length();
-                        if (pp == 0) {
-                            tagsa[pp] = tem;
-                            pp++;
-                        } else {
-                            tagsa[pp] = temp[k - 1] + " " + tem;
-                            pp++;
-                        }
-                        for (j = 0; j < teml; j++) {
-                            hint = String.valueOf(tem.charAt(j));
-                            if (j == 0) {
-                                tagsa[pp] = hint;
+                while (true) {
+                    if (sellection == 0) {
+                        for (k = 0; k < l; k++) {
+                            String tem = temp[k];
+                            int teml = tem.length();
+                            if (pp == 0) {
+                                tagsa[pp] = tem;
                                 pp++;
                             } else {
-                                tagsa[pp] = tagsa[pp - 1] + hint;
+                                tagsa[pp] = temp[k - 1] + " " + tem;
                                 pp++;
                             }
-                        }
-                        if (k == l - 1) {
-                            for (j = 0; j < sl; j++) {
-                                hint = String.valueOf(tag.charAt(j));
+                            for (j = 0; j < teml; j++) {
+                                hint = String.valueOf(tem.charAt(j));
                                 if (j == 0) {
                                     tagsa[pp] = hint;
                                     pp++;
@@ -319,100 +310,112 @@ public class editproduct extends Fragment {
                                     pp++;
                                 }
                             }
-                        }
-                    }
-                    sellection++;
-                } else {
-                    loadingadapter.startloading();
-                    final List<String> catogary = Arrays.asList(category);
-                    final List<String> tags = Arrays.asList(tagsa);
-                    if (filepath == null) {
-                        float p = Float.valueOf(priceed.getText().toString()).floatValue();
-                        float o = Float.valueOf(offped.getText().toString()).floatValue();
-                        float total = ((p - o) / p) * 100;
-                        int tto = (int) total;
-                        String offerpersents = Integer.toString(tto);
-                        if (deliveryed.getText().toString().trim().isEmpty()) {
-                            deliveryfee = "Free";
-                        }
-                        Modalclass upload = new Modalclass(produed.getText().toString().trim(), imageurl, priceed.getText().toString().trim(), offped.getText().toString().trim(), quanted.getSelectedItem().toString(),
-                                stocked.getText().toString().trim(), offerpersents, deliveryfee, imagename, catogary, tags);
-                        db.collection("products").document(imagename).set(upload, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                loadingadapter.finishloading();
-                                Toast.makeText(getActivity(), "Updated", Toast.LENGTH_SHORT).show();
+                            if (k == l - 1) {
+                                for (j = 0; j < sl; j++) {
+                                    hint = String.valueOf(tag.charAt(j));
+                                    if (j == 0) {
+                                        tagsa[pp] = hint;
+                                        pp++;
+                                    } else {
+                                        tagsa[pp] = tagsa[pp - 1] + hint;
+                                        pp++;
+                                    }
+                                }
                             }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                loadingadapter.finishloading();
-                                Toast.makeText(getActivity(), "Update Failed", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                        }
+                        sellection++;
                     } else {
-                        StorageReference desertRef = mStorageRef.child("Productimages/" + imagename);
-                        desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                final StorageReference riversRef = mStorageRef.child("Productimages/" + imagename);
-                                riversRef.putFile(filepath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                    @Override
-                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                        riversRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                            @Override
-                                            public void onSuccess(Uri uri) {
-                                                downloadUrl = uri;
-                                                String downloadUrls = downloadUrl.toString();
-                                                String accesstoken = imagename;
-                                                float p = Float.valueOf(priceed.getText().toString()).floatValue();
-                                                float o = Float.valueOf(offped.getText().toString()).floatValue();
-                                                float total = ((p - o) / p) * 100;
-                                                int tto = (int) total;
-                                                String offerpersented = Integer.toString(tto);
-                                                if (deliveryed.getText().toString().trim().isEmpty()) {
-                                                    deliveryfee = "Free";
-                                                }
-                                                Modalclass upload = new Modalclass(produed.getText().toString().trim(), downloadUrls, priceed.getText().toString().trim(),
-                                                        offped.getText().toString().trim(), quanted.getSelectedItem().toString().trim(),
-                                                        stocked.getText().toString().trim(), offerpersented, deliveryfee, accesstoken, catogary, tags);
-                                                db.collection("products").document(imagename).set(upload, SetOptions.merge())
-                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                            @Override
-                                                            public void onSuccess(Void aVoid) {
-                                                                loadingadapter.finishloading();
-                                                                Toast.makeText(getActivity(), "Updated", Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        }).addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        loadingadapter.finishloading();
-                                                        Toast.makeText(getActivity(), "Update Failed", Toast.LENGTH_SHORT).show();
+                        loadingadapter.startloading();
+                        final List<String> catogary = Arrays.asList(category);
+                        final List<String> tags = Arrays.asList(tagsa);
+                        if (filepath == null) {
+                            float p = Float.valueOf(priceed.getText().toString()).floatValue();
+                            float o = Float.valueOf(offped.getText().toString()).floatValue();
+                            float total = ((p - o) / p) * 100;
+                            int tto = (int) total;
+                            String offerpersents = Integer.toString(tto);
+                            if (deliveryed.getText().toString().trim().isEmpty()) {
+                                deliveryfee = "Free";
+                            }
+                            Modalclass upload = new Modalclass(produed.getText().toString().trim(), imageurl, priceed.getText().toString().trim(), offped.getText().toString().trim(), quanted.getSelectedItem().toString(),
+                                    stocked.getText().toString().trim(), offerpersents, deliveryfee, imagename, catogary, tags);
+                            db.collection("products").document(imagename).set(upload, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    loadingadapter.finishloading();
+                                    Toast.makeText(getActivity(), "Updated", Toast.LENGTH_SHORT).show();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    loadingadapter.finishloading();
+                                    Toast.makeText(getActivity(), "Update Failed", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } else {
+                            StorageReference desertRef = mStorageRef.child("Productimages/" + imagename);
+                            desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    final StorageReference riversRef = mStorageRef.child("Productimages/" + imagename);
+                                    riversRef.putFile(filepath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                            riversRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                @Override
+                                                public void onSuccess(Uri uri) {
+                                                    downloadUrl = uri;
+                                                    String downloadUrls = downloadUrl.toString();
+                                                    String accesstoken = imagename;
+                                                    float p = Float.valueOf(priceed.getText().toString()).floatValue();
+                                                    float o = Float.valueOf(offped.getText().toString()).floatValue();
+                                                    float total = ((p - o) / p) * 100;
+                                                    int tto = (int) total;
+                                                    String offerpersented = Integer.toString(tto);
+                                                    if (deliveryed.getText().toString().trim().isEmpty()) {
+                                                        deliveryfee = "Free";
                                                     }
-                                                });
+                                                    Modalclass upload = new Modalclass(produed.getText().toString().trim(), downloadUrls, priceed.getText().toString().trim(),
+                                                            offped.getText().toString().trim(), quanted.getSelectedItem().toString().trim(),
+                                                            stocked.getText().toString().trim(), offerpersented, deliveryfee, accesstoken, catogary, tags);
+                                                    db.collection("products").document(imagename).set(upload, SetOptions.merge())
+                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
+                                                                    loadingadapter.finishloading();
+                                                                    Toast.makeText(getActivity(), "Updated", Toast.LENGTH_SHORT).show();
+                                                                }
+                                                            }).addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            loadingadapter.finishloading();
+                                                            Toast.makeText(getActivity(), "Update Failed", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
 
-                                            }
-                                        });
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(getActivity(), "Error Occured in update", Toast.LENGTH_SHORT).show();
-                                        loadingadapter.finishloading();
+                                                }
+                                            });
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(getActivity(), "Error Occured in update", Toast.LENGTH_SHORT).show();
+                                            loadingadapter.finishloading();
 
-                                    }
-                                });
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(getActivity(), "Error in img delete", Toast.LENGTH_SHORT).show();
-                                loadingadapter.finishloading();
-                            }
-                        });
+                                        }
+                                    });
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(getActivity(), "Error in img delete", Toast.LENGTH_SHORT).show();
+                                    loadingadapter.finishloading();
+                                }
+                            });
 
+                        }
+                    break;
                     }
-
                 }
             }
         });
