@@ -1,9 +1,11 @@
 package com.example.whiteshopingapp;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -64,17 +66,18 @@ public class Addproducts extends Fragment {
     private StorageReference mStorageRef;
     private ImageView prdtimsel;
     private Button prdtadbt;
-    private EditText produ, price,offp,delivery,stock;
-    private String deliveryfee;
+    private EditText produ, price,offp,delivery,stock,ta;
+    private String deliveryfee,a, offerpersent;
     private Uri downloadUrl;
     private Spinner quant;
     private FirebaseFirestore db;
     private RecyclerView catre;
+    private FragmentManager fragmentManager;
     private Integer i=0,curr=9,j,k,sellection=0,l;
     private FirestoreRecyclerAdapter adapter1;
     public  String [] quntity = new String[]{"Quantity","Kilogram","Gram","Liter"};
     public  String [] category = new String[curr];
-    public  String [] tagsa = new String[30];
+    public  String [] tagsa = new String[60];
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -170,6 +173,7 @@ public class Addproducts extends Fragment {
         stock = v.findViewById(R.id.stocks);
         prdtadbt = v.findViewById(R.id.upload);
         catre = v.findViewById(R.id.catselection);
+        ta = v.findViewById(R.id.tags);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line,quntity);
         quant.setAdapter(adapter);
         Query query = db.collection("categories");
@@ -186,13 +190,27 @@ public class Addproducts extends Fragment {
             protected void onBindViewHolder(@NonNull final catholder holder, int position, @NonNull final cataddmodal model) {
                 Glide.with(getContext()).load(model.getImageurl()).into(holder.cati);
                 holder.catn.setText(model.getCatName());
+
                 holder.c.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                      category[i]= model.getCatName();
-                      i++;
-                      curr++;
-                      holder.c.setBackgroundColor(Color.GRAY);
+
+                      int b = category.length;
+                      for (int c = 0;c<b;c++) {
+                          if (category[c] == model.getCatName()) {
+                              holder.c.setBackgroundColor(Color.WHITE);
+                              category[c]=null;
+                              i--;
+                              break;
+                          }
+                          else if(category[c] != model.getCatName() && c==b-1){
+                              holder.c.setBackgroundColor(Color.LTGRAY);
+                              category[i]= model.getCatName();
+                              i++;
+                              curr++;
+                          }
+                      }
+
                      // String j = String.valueOf(i);
                        // Toast.makeText(getActivity(), category[--i], Toast.LENGTH_SHORT).show();
                     }
@@ -217,53 +235,66 @@ public class Addproducts extends Fragment {
         prdtadbt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int sellection = 0;
-                String tag = produ.getText().toString().trim().toLowerCase();
+                String tag =  produ.getText().toString().trim();
                 int sl = tag.length();
-                final String[] temp = tag.split(" ");
-                int l = temp.length;
-                int pp = 0;
+                final String [] temp = tag.split(" ");
+                l =  temp.length;
+                int p =0;
                 String hint;
-                while (true) {
-                    if (sellection == 0) {
-                        for (k = 0; k < l; k++) {
-                            String tem = temp[k];
-                            int teml = tem.length();
-                            if (pp == 0) {
-                                tagsa[pp] = tem;
-                                pp++;
-                            } else {
-                                tagsa[pp] = temp[k - 1] + " " + tem;
-                                pp++;
-                            }
-                            for (j = 0; j < teml; j++) {
-                                hint = String.valueOf(tem.charAt(j));
-                                if (j == 0) {
-                                    tagsa[pp] = hint;
-                                    pp++;
-                                } else {
-                                    tagsa[pp] = tagsa[pp - 1] + hint;
-                                    pp++;
-                                }
-                            }
-                            if (k == l - 1) {
-                                for (j = 0; j < sl; j++) {
-                                    hint = String.valueOf(tag.charAt(j));
-                                    if (j == 0) {
-                                        tagsa[pp] = hint;
-                                        pp++;
-                                    } else {
-                                        tagsa[pp] = tagsa[pp - 1] + hint;
-                                        pp++;
-                                    }
-                                }
-                            }
+                if (sellection == 0){
+                for (k=0;k<l;k++){
+                   String tem = temp[k];
+                   int teml = tem.length();
+                   if (p == 0){
+                       tagsa[p] =tem;
+                       p++;
+                   }
+                   else {
+                       tagsa[p] = temp[k-1]+" "+tem;
+                       p++;
+                   }
+                   for (j=0;j<teml;j++){
+                       hint=String.valueOf(tem.charAt(j));
+                       if (j == 0){
+                           tagsa[p] = hint;
+                           p++;
+                       }
+                       else {
+                           tagsa[p] = tagsa[p-1]+hint;
+                           p++;
+                       }
+                   }
+                   if (k==l-1){
+                       for (j=0;j<sl;j++){
+                           hint=String.valueOf(tag.charAt(j));
+                           if (j==0){
+                               tagsa[p] = hint;
+                               p++;
+                           }
+                           else {
+                               tagsa[p]=tagsa[p-1]+hint;
+                               p++;
+                           }
+                       }
+                   }
+                }
+                int q = tagsa.length;
+                for (int f = 0 ;f<q;f++){
+                    if (tagsa[f] != null) {
+                        if (f == 0) {
+                            a = tagsa[f];
+                        } else {
+                            a = a + "," + tagsa[f];
                         }
-                        sellection++;
                     }
-                    else {
-                    loadingadapter.startloading();
+                }
+                    ta.setText(a);
+                    sellection++;
+                }
+                else {
 
+                try {
+                    loadingadapter.startloading();
                     final String random = UUID.randomUUID().toString();
                     final StorageReference riversRef = mStorageRef.child("Productimages/" +random);
                     riversRef.putFile(filepath)
@@ -274,15 +305,21 @@ public class Addproducts extends Fragment {
                                         @Override
                                         public void onSuccess(Uri uri) {
                                             downloadUrl = uri;
-                                            List<String> catogary = Arrays.asList(category);
-                                            List<String> tags = Arrays.asList(tagsa);
+                                            final List<String> catogary = Arrays.asList(category);
+                                            final List<String> tags = Arrays.asList(tagsa);
                                             String downloadUrls = downloadUrl.toString();
                                             String accesstoken = random;
-                                            float p  = Float.valueOf(price.getText().toString()).floatValue();
-                                            float o  = Float.valueOf(offp.getText().toString()).floatValue();
-                                            float total = ((p-o)/p)*100;
-                                            int tto = (int) total;
-                                            String offerpersent = Integer.toString(tto);
+                                            try {
+                                                float p  = Float.valueOf(price.getText().toString()).floatValue();
+                                                float o  = Float.valueOf(offp.getText().toString()).floatValue();
+                                                float total = ((p-o)/p)*100;
+                                                int tto = (int) total;
+                                                offerpersent = Integer.toString(tto);
+                                            }
+                                            catch (Exception e){
+
+                                            }
+
                                             if (delivery.getText().toString().trim().isEmpty()){
                                                 deliveryfee = "Free";
                                             }
@@ -297,8 +334,19 @@ public class Addproducts extends Fragment {
                                                     price.setText("");
                                                     offp.setText("");
                                                     stock.setText("");
-                                                    prdtimsel.setImageBitmap(null);
+                                                    refesh();
+                                                    sellection=0;
+                                                    i=0;
+                                                    j=0;
+                                                    k=0;
+                                                    l=0;
+                                                    a=null;
                                                     loadingadapter.finishloading();
+
+//                                                    tags.clear();
+//                                                    catogary.clear();
+
+
 
                                                 }
                                             }).addOnFailureListener(new OnFailureListener() {
@@ -321,12 +369,23 @@ public class Addproducts extends Fragment {
                                 }
                             });
 
-                    break;
+                }catch (Exception e){
+                    Toast.makeText(getActivity(), "Fields are empty", Toast.LENGTH_SHORT).show();
+                    loadingadapter.finishloading();
                 }
-                }
+
+            }
             }
         });
         return v;
+    }
+
+    private void refesh() {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        if (Build.VERSION.SDK_INT >= 26) {
+            ft.setReorderingAllowed(false);
+        }
+        ft.detach(this).attach(this).commit();
     }
 
     private class catholder extends RecyclerView.ViewHolder {
