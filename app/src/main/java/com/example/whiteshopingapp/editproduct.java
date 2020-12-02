@@ -62,9 +62,9 @@ public class editproduct extends Fragment {
     private StorageReference mStorageRef;
     private ImageView prdtimseled;
     private Button updates,delets;
-    private EditText produed, priceed,offped,deliveryed,stocked;
-    private Spinner quanted,cated;
-    private TextView qunt,catet;
+    private EditText produed, priceed,offped,deliveryed,stocked,des;
+    private Spinner quanted;
+    private TextView qunt;
     private String deliveryfee,imagename,product,mrp,off,quanty,stock,offerpercent,delivery,imageurl;
     private Uri downloadUrl,im;
     private FirebaseFirestore db;
@@ -74,7 +74,7 @@ public class editproduct extends Fragment {
     private FragmentTransaction fragmentTransaction;
     public  String [] quntity = new String[]{"Quantity","Kilogram","Gram","Liter"};
     public  String [] category = new String[9];
-    private String [] tagsa = new String[60];
+    private String [] tagsa = new String[100];
     private  List<String> group = new ArrayList<>();
 
     // TODO: Rename parameter arguments, choose names that match
@@ -169,6 +169,7 @@ public class editproduct extends Fragment {
         delets = v.findViewById(R.id.delet);
         updates = v.findViewById(R.id.update);
         qunt = v.findViewById(R.id.quntext);
+        des = v.findViewById(R.id.description);
         catreed = v.findViewById(R.id.catselectioned);
         product = getArguments().getString("productname");
         mrp = getArguments().getString("price");
@@ -325,7 +326,9 @@ public class editproduct extends Fragment {
             @Override
             public void onClick(View v) {
                 int sellection = 0;
-                String tag = produed.getText().toString().trim().toLowerCase();
+                String f = produed.getText().toString().trim().toLowerCase();
+                String s = des.getText().toString().trim().toLowerCase();
+                String tag = f+" "+s;
                 int sl = tag.length();
                 final String[] temp = tag.split(" ");
                 int l = temp.length;

@@ -77,7 +77,7 @@ public class Addproducts extends Fragment {
     private FirestoreRecyclerAdapter adapter1;
     public  String [] quntity = new String[]{"Quantity","Kilogram","Gram","Liter"};
     public  String [] category = new String[curr];
-    public  String [] tagsa = new String[60];
+    public  String [] tagsa = new String[100];
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -173,7 +173,7 @@ public class Addproducts extends Fragment {
         stock = v.findViewById(R.id.stocks);
         prdtadbt = v.findViewById(R.id.upload);
         catre = v.findViewById(R.id.catselection);
-        ta = v.findViewById(R.id.tags);
+        ta = v.findViewById(R.id.description);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line,quntity);
         quant.setAdapter(adapter);
         Query query = db.collection("categories");
@@ -235,7 +235,9 @@ public class Addproducts extends Fragment {
         prdtadbt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String tag =  produ.getText().toString().trim();
+                String fi =  produ.getText().toString().trim().toLowerCase();
+                String s = ta.getText().toString().trim().toLowerCase();
+                String tag = fi+" "+s;
                 int sl = tag.length();
                 final String [] temp = tag.split(" ");
                 l =  temp.length;
@@ -288,7 +290,7 @@ public class Addproducts extends Fragment {
                         }
                     }
                 }
-                    ta.setText(a);
+                   // ta.setText(a);
                     sellection++;
                 }
                 else {
