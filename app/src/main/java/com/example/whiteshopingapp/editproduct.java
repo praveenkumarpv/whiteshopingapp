@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,8 +30,11 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.SetOptions;
@@ -40,6 +44,7 @@ import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -63,13 +68,14 @@ public class editproduct extends Fragment {
     private String deliveryfee,imagename,product,mrp,off,quanty,stock,offerpercent,delivery,imageurl;
     private Uri downloadUrl,im;
     private FirebaseFirestore db;
-    private  Integer i=0,curr=9,j,k;
+    private  Integer i=0,curr=9,j,k,y=0;
     private FirestoreRecyclerAdapter adapter1;
     private RecyclerView catreed;
     private FragmentTransaction fragmentTransaction;
     public  String [] quntity = new String[]{"Quantity","Kilogram","Gram","Liter"};
     public  String [] category = new String[9];
     private String [] tagsa = new String[60];
+    private  List<String> group = new ArrayList<>();
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -181,12 +187,27 @@ public class editproduct extends Fragment {
         deliveryed.setText(delivery);
         stocked.setText(stock);
         Glide.with(getActivity()).asBitmap().load(imageurl).into(prdtimseled);
+        db.collection("products")
+                .document(imagename).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                   @Override
+                                                   public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                       DocumentSnapshot document = task.getResult();
+                                                       group = (List<String>) document.get("catogary");
+                                                       Log.d("myTag", String.valueOf(group));
+                                                       category = new String[group.size()];
+                                                       Log.d("myarray", String.valueOf(category.length));
+                                                   }
+                                               });
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line,quntity);
         quanted.setAdapter(adapter);
         quanted.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                qunt.setText(quanted.getSelectedItem().toString());
+                //quanted.setText(quanted.getSelectedItem().toString());
+                quanty = quanted.getSelectedItem().toString();
+
+
             }
 
             @Override
@@ -199,6 +220,7 @@ public class editproduct extends Fragment {
             public void onClick(View v) {
                 quanted.setVisibility(View.VISIBLE);
                 qunt.setVisibility(View.GONE);
+                y++;
             }
         });
 
@@ -225,15 +247,36 @@ public class editproduct extends Fragment {
             protected void onBindViewHolder(@NonNull final catedholder holder, int position, @NonNull final cataddmodal model) {
                 Glide.with(getContext()).load(model.getImageurl()).into(holder.cati);
                 holder.catn.setText(model.getCatName());
+                int v = category.length;
+                String f = model.getCatName();
+                boolean g = group.contains(f);
+                if (g == true){
+                    holder.c.setBackgroundColor(Color.LTGRAY);
+                }
+//                for (int d = 0;d<v;v++){
+//                    if (category[d] == f){
+//                        holder.c.setBackgroundColor(Color.LTGRAY);
+//                        break;
+//                    }
+//               }
                 holder.c.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        category[i]= model.getCatName();
-                        i++;
-                        //curr++;
-                        holder.c.setBackgroundColor(Color.GRAY);
-                        // String j = String.valueOf(i);
-                        // Toast.makeText(getActivity(), category[--i], Toast.LENGTH_SHORT).show();
+                        int b = category.length;
+                        Log.d("myarray", String.valueOf(category.length));
+                        for (int c = 0;c<b;c++) {
+                            if (category[c] == model.getCatName()) {
+                                holder.c.setBackgroundColor(Color.WHITE);
+                                category[c] = null;
+                                i--;
+                                break;
+                            } else if (category[c] != model.getCatName() && c == b - 1) {
+                                holder.c.setBackgroundColor(Color.LTGRAY);
+                                category[i] = model.getCatName();
+                                i++;
+                                curr++;
+                            }
+                        }
                     }
                 });
             }
@@ -326,6 +369,10 @@ public class editproduct extends Fragment {
                         sellection++;
                     } else {
                         loadingadapter.startloading();
+//                        if (y!=0){
+//                           quanty =
+//                        }
+
                         final List<String> catogary = Arrays.asList(category);
                         final List<String> tags = Arrays.asList(tagsa);
                         if (filepath == null) {
@@ -337,7 +384,7 @@ public class editproduct extends Fragment {
                             if (deliveryed.getText().toString().trim().isEmpty()) {
                                 deliveryfee = "Free";
                             }
-                            Modalclass upload = new Modalclass(produed.getText().toString().trim(), imageurl, priceed.getText().toString().trim(), offped.getText().toString().trim(), quanted.getSelectedItem().toString(),
+                            Modalclass upload = new Modalclass(produed.getText().toString().trim(), imageurl, priceed.getText().toString().trim(), offped.getText().toString().trim(),quanty,
                                     stocked.getText().toString().trim(), offerpersents, deliveryfee, imagename, catogary, tags);
                             db.collection("products").document(imagename).set(upload, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -376,7 +423,7 @@ public class editproduct extends Fragment {
                                                         deliveryfee = "Free";
                                                     }
                                                     Modalclass upload = new Modalclass(produed.getText().toString().trim(), downloadUrls, priceed.getText().toString().trim(),
-                                                            offped.getText().toString().trim(), quanted.getSelectedItem().toString().trim(),
+                                                            offped.getText().toString().trim(), quanty,
                                                             stocked.getText().toString().trim(), offerpersented, deliveryfee, accesstoken, catogary, tags);
                                                     db.collection("products").document(imagename).set(upload, SetOptions.merge())
                                                             .addOnSuccessListener(new OnSuccessListener<Void>() {

@@ -1,6 +1,7 @@
 package com.example.whiteshopingapp;
 
 import android.app.DatePickerDialog;
+import android.app.DownloadManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -161,7 +162,7 @@ public class profile extends Fragment {
 
     private void getdata(final String orderselecter) {
         String wow = orderselecter;
-        Query query = db.collection("Orders").whereEqualTo("date",wow);
+        Query query = db.collection("Orders").whereEqualTo("date",wow).orderBy("time", Query.Direction.DESCENDING);
        // Toast.makeText(getActivity(), wow, Toast.LENGTH_SHORT).show();
         FirestoreRecyclerOptions<ordermodalclass> op = new FirestoreRecyclerOptions.Builder<ordermodalclass>().setQuery(query,ordermodalclass.class).build();
         adapter = new FirestoreRecyclerAdapter<ordermodalclass, orderviewholder>(op) {
