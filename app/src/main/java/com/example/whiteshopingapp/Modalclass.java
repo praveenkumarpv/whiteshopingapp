@@ -14,11 +14,12 @@ public class Modalclass {
     private String imagename;
     private List<String> catogary;
     private List<String> tags;
+    private String description;
 
     private  Modalclass(){}
 
     public Modalclass(String productname,String imurl, String mrp, String offprice, String quantity, String stock,
-                      String offpers, String deliverycharge,String imagename,List<String> catogary,List<String> tags) {
+                      String offpers, String deliverycharge,String imagename,List<String> catogary,List<String> tags,String description) {
         this.productname = productname;
         this.imurl = imurl;
         this.mrp = mrp;
@@ -30,6 +31,7 @@ public class Modalclass {
         this.imagename =imagename;
         this.catogary = catogary;
         this.tags = tags;
+        this.description = description;
     }
 
     public String getImurl() {
@@ -116,5 +118,13 @@ public class Modalclass {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

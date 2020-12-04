@@ -65,7 +65,7 @@ public class editproduct extends Fragment {
     private EditText produed, priceed,offped,deliveryed,stocked,des;
     private Spinner quanted;
     private TextView qunt;
-    private String deliveryfee,imagename,product,mrp,off,quanty,stock,offerpercent,delivery,imageurl;
+    private String deliveryfee,imagename,product,mrp,off,quanty,stock,offerpercent,delivery,imageurl,descrip;
     private Uri downloadUrl,im;
     private FirebaseFirestore db;
     private  Integer i=0,curr=9,j,k,y=0;
@@ -180,13 +180,14 @@ public class editproduct extends Fragment {
         delivery = getArguments().getString("delivery");
         imageurl = getArguments().getString("image");
         imagename = getArguments().getString("imagename");
-
+        descrip = getArguments().getString("description");
         produed.setText(product);
         priceed.setText(mrp);
         offped.setText(off);
         qunt.setText(quanty);
         deliveryed.setText(delivery);
         stocked.setText(stock);
+        des.setText(descrip);
         Glide.with(getActivity()).asBitmap().load(imageurl).into(prdtimseled);
         db.collection("products")
                 .document(imagename).get()
@@ -197,6 +198,7 @@ public class editproduct extends Fragment {
                                                        group = (List<String>) document.get("catogary");
                                                        Log.d("myTag", String.valueOf(group));
                                                        category = new String[group.size()];
+                                                       group.toArray(category);
                                                        Log.d("myarray", String.valueOf(category.length));
                                                    }
                                                });
@@ -272,9 +274,21 @@ public class editproduct extends Fragment {
                                 i--;
                                 break;
                             } else if (category[c] != model.getCatName() && c == b - 1) {
-                                holder.c.setBackgroundColor(Color.LTGRAY);
-                                category[i] = model.getCatName();
-                                i++;
+                                try {
+                                    holder.c.setBackgroundColor(Color.LTGRAY);
+                                    category[i] = model.getCatName();
+                                    i++;
+
+                                }catch (Exception e){
+                                    for (int w = 0;c<b;c++) {
+                                        if (category[w] == null) {
+                                            holder.c.setBackgroundColor(Color.LTGRAY);
+                                            category[c] = model.getCatName();
+                                            i++;
+                                        }
+                                    }
+                                }
+
                                 curr++;
                             }
                         }
@@ -328,7 +342,7 @@ public class editproduct extends Fragment {
                 int sellection = 0;
                 String f = produed.getText().toString().trim().toLowerCase();
                 String s = des.getText().toString().trim().toLowerCase();
-                String tag = f+" "+s;
+                String tag = f;
                 int sl = tag.length();
                 final String[] temp = tag.split(" ");
                 int l = temp.length;
@@ -369,6 +383,13 @@ public class editproduct extends Fragment {
                                 }
                             }
                         }
+                        String [] gm = s.split(",");
+                        int sld = gm.length;
+
+                        for (int gf=0;gf<sld;gf++){
+                            tagsa[pp]=gm[gf];
+                            pp++;
+                        }
                         sellection++;
                     } else {
                         loadingadapter.startloading();
@@ -388,7 +409,7 @@ public class editproduct extends Fragment {
                                 deliveryfee = "Free";
                             }
                             Modalclass upload = new Modalclass(produed.getText().toString().trim(), imageurl, priceed.getText().toString().trim(), offped.getText().toString().trim(),quanty,
-                                    stocked.getText().toString().trim(), offerpersents, deliveryfee, imagename, catogary, tags);
+                                    stocked.getText().toString().trim(), offerpersents, deliveryfee, imagename, catogary, tags,des.getText().toString().trim());
                             db.collection("products").document(imagename).set(upload, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
@@ -427,7 +448,7 @@ public class editproduct extends Fragment {
                                                     }
                                                     Modalclass upload = new Modalclass(produed.getText().toString().trim(), downloadUrls, priceed.getText().toString().trim(),
                                                             offped.getText().toString().trim(), quanty,
-                                                            stocked.getText().toString().trim(), offerpersented, deliveryfee, accesstoken, catogary, tags);
+                                                            stocked.getText().toString().trim(), offerpersented, deliveryfee, accesstoken, catogary, tags,des.getText().toString().trim());
                                                     db.collection("products").document(imagename).set(upload, SetOptions.merge())
                                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                 @Override

@@ -138,7 +138,7 @@ public class home extends Fragment {
                         args.putString("delivery",modalclass.getDeliverycharge());
                         args.putString("image",modalclass.getImurl());
                         args.putString("imagename",modalclass.getImagename());
-                        args.putStringArrayList("arraylist", (ArrayList<String>) modalclass.getCatogary());
+                        args.putString("description",modalclass.getDescription());
                         lb.setArguments(args);
                         fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                         fragmentTransaction.replace(R.id.fragment,lb);

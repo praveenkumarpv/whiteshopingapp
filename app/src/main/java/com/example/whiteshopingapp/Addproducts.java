@@ -327,7 +327,7 @@ public class Addproducts extends Fragment {
                                             }
                                             Modalclass upload = new Modalclass(produ.getText().toString().trim(),downloadUrls,price.getText().toString().trim(),
                                                     offp.getText().toString().trim(),quant.getSelectedItem().toString(),
-                                                    stock.getText().toString().trim(),offerpersent,deliveryfee,accesstoken,catogary,tags);
+                                                    stock.getText().toString().trim(),offerpersent,deliveryfee,accesstoken,catogary,tags,ta.getText().toString().trim());
                                             db.collection("products").document(random).set(upload).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
