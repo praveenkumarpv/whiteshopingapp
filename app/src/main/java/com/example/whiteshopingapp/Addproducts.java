@@ -176,7 +176,7 @@ public class Addproducts extends Fragment {
         ta = v.findViewById(R.id.description);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line,quntity);
         quant.setAdapter(adapter);
-        Query query = db.collection("categories");
+        Query query = db.collection("categories").orderBy("No");
         FirestoreRecyclerOptions<cataddmodal> op = new FirestoreRecyclerOptions.Builder<cataddmodal>().setQuery(query,cataddmodal.class).build();
         adapter1 = new FirestoreRecyclerAdapter<cataddmodal, catholder>(op) {
             @NonNull

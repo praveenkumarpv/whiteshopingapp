@@ -236,7 +236,7 @@ public class editproduct extends Fragment {
                 startActivityForResult(intent, PICK_IMAGE_REQUEST);
             }
         });
-        Query query = db.collection("categories");
+        Query query = db.collection("categories").orderBy("No");
         FirestoreRecyclerOptions<cataddmodal> op = new FirestoreRecyclerOptions.Builder<cataddmodal>().setQuery(query,cataddmodal.class).build();
         adapter1 = new FirestoreRecyclerAdapter<cataddmodal, catedholder>(op) {
             @NonNull
