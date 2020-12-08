@@ -103,7 +103,6 @@ public class offer extends Fragment {
         mStorageRef = FirebaseStorage.getInstance().getReference();
         loadingadapter = new Loadingadapter(getActivity());
         db = FirebaseFirestore.getInstance();
-        homeadd = view.findViewById(R.id.homeadd);
         homeoffer = view.findViewById(R.id.homeoffer);
         offeradd = view.findViewById(R.id.offeradd);
         offersre = view.findViewById(R.id.offeraddrecy);
@@ -228,19 +227,6 @@ public class offer extends Fragment {
             }
         });
 
-        homeadd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (limithome == 4){
-                    Toast.makeText(getActivity(), "Banners are full", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    getimage();
-                    activity = "home";
-
-                }
-            }
-        });
 
         return view;
     }
@@ -262,7 +248,7 @@ public class offer extends Fragment {
             filepath = data.getData();
             final String random = UUID.randomUUID().toString();
             if (activity.equals("home")){
-                final StorageReference riversRef = mStorageRef.child("homescreenbanner/" +random);
+                /*final StorageReference riversRef = mStorageRef.child("homescreenbanner/" +random);
                 riversRef.putFile(filepath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -295,7 +281,7 @@ public class offer extends Fragment {
                     public void onFailure(@NonNull Exception e) {
                         Toast.makeText(getActivity(), "Error Occured", Toast.LENGTH_SHORT).show();
                     }
-                });
+                });*/
 
             }
             if (activity.equals("offer")){

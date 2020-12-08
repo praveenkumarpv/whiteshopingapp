@@ -120,11 +120,11 @@ public class home extends Fragment {
 
             @Override
             protected void onBindViewHolder(final productviewholder productviewholder, int i, final Modalclass modalclass) {
-                productviewholder.pri.setText(modalclass.getOffprice());
+                productviewholder.pri.setText("₹"+modalclass.getOffprice());
                 productviewholder.mr.setText("₹"+modalclass.getMrp());
                 productviewholder.productname.setText(modalclass.getProductname());
                 Glide.with(getActivity()).asBitmap().load(modalclass.getImurl()).into(productviewholder.proimg);
-                productviewholder.edit.setOnClickListener(new View.OnClickListener() {
+                productviewholder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         editproduct lb = new editproduct();
@@ -165,7 +165,7 @@ public class home extends Fragment {
             proimg  = itemView.findViewById(R.id.productimage);
             pri = itemView.findViewById(R.id.offerprice);
             mr = itemView.findViewById(R.id.mrps);
-            edit = itemView.findViewById(R.id.editbutton);
+            //edit = itemView.findViewById(R.id.editbutton);
             productname =itemView.findViewById(R.id.productnames);
         }
     }

@@ -15,10 +15,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0.9"
-            android:text="Home"
+            android:text="Home Screen Banner"
             android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"
-            android:textSize="25dp"
+            android:textSize="20dp"
             android:textColor="#000"/>
         <HorizontalScrollView
             android:layout_width="match_parent"
@@ -29,20 +29,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-                <ImageView
-                    android:id="@+id/homeadd"
-                    android:layout_width="310dp"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/addphotobackbg"
-                    android:src="@drawable/addphoto"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:paddingEnd="50dp"
-                    android:paddingTop="50dp"
-                    android:paddingBottom="50dp"
-                    android:paddingStart="50dp"/>
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/homeoffer"
                     android:layout_width="wrap_content"
@@ -58,6 +44,7 @@
 
     </LinearLayout>
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -72,7 +59,7 @@
             android:text="Offers"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
-            android:textSize="25dp"
+            android:textSize="20dp"
             android:textColor="#000"/>
         <HorizontalScrollView
             android:layout_width="match_parent"
