@@ -111,7 +111,7 @@ public class profile extends Fragment {
        Calendar calendar = Calendar.getInstance();
         year = calendar.get(Calendar.YEAR);
         years = Integer.toString(year);
-        month = calendar.get(Calendar.MONTH)+1;
+        month = 1+calendar.get(Calendar.MONTH) ;
         months = Integer.toString(month);
         day = calendar.get(Calendar.DAY_OF_MONTH);
         dates = Integer.toString(day);
@@ -131,7 +131,7 @@ public class profile extends Fragment {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
                 year = calendar.get(Calendar.YEAR);
                 years = Integer.toString(year);
-                month = calendar.get(Calendar.MONTH)+1;
+                month = calendar.get(Calendar.MONTH);
                 months = Integer.toString(month);
                 day = calendar.get(Calendar.DAY_OF_MONTH);
                 dates = Integer.toString(day);
@@ -143,7 +143,7 @@ public class profile extends Fragment {
                         orderSorted lv = new orderSorted();
                         Bundle arg = new Bundle();
                         arg.putInt("day",day);
-                        arg.putInt("month",month);
+                        arg.putInt("month",month +1);
                         arg.putInt("year",year);
                         lv.setArguments(arg);
                         fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
