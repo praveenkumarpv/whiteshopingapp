@@ -60,7 +60,7 @@ public class mainscreen extends AppCompatActivity {
                         fragmenttransation(fragment);
                         break;
                     case R.id.profile:
-                        fragment = new profile();
+                        fragment = new Ordersview();
                         fragmenttransation(fragment);
                         break;
                     case R.id.logout:

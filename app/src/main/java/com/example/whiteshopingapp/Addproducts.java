@@ -2,6 +2,7 @@ package com.example.whiteshopingapp;
 
 import android.app.Activity;
 import android.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -24,19 +25,24 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import com.google.firebase.firestore.Query;
@@ -61,24 +67,28 @@ import static android.app.Activity.RESULT_OK;
  */
 public class Addproducts extends Fragment {
     private static final int PICK_IMAGE_REQUEST = 1;
-    private Uri filepath,im;
+    private Uri filepath, im;
     FragmentTransaction fragmentTransaction;
     private StorageReference mStorageRef;
-    private ImageView prdtimsel;
+    private ImageView prdtimsel, BannerImage;
+    Switch BannerSwitch;
+    LinearLayout SelectBannerImage;
     private Button prdtadbt;
-    private EditText produ, price,offp,delivery,stock,ta;
-    private String deliveryfee,a, offerpersent;
+    private EditText produ, price, offp, delivery, stock, ta;
+    private String deliveryfee, a, offerpersent;
     private Uri downloadUrl;
     private Spinner quant;
     private FirebaseFirestore db;
     private RecyclerView catre;
     private FragmentManager fragmentManager;
-    private Integer i=0,curr=9,j,k,sellection=0,l;
+    private Integer i = 0, curr = 9, j, k, sellection = 0, l;
     private FirestoreRecyclerAdapter adapter1;
-    public  String [] quntity = new String[]{"Quantity","Kilogram","Gram","Liter"};
-    public  String [] category = new String[curr];
-    public  String [] tagsa = new String[100];
-
+    public String[] quntity = new String[]{"Quantity", "Kilogram", "Gram", "Liter"};
+    public String[] category = new String[curr];
+    public String[] tagsa = new String[100];
+    String random;
+    boolean banner = false, flag = false;
+    ProgressDialog progressDialog;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -118,49 +128,94 @@ public class Addproducts extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
-    private void startcroping(Uri im) {
-        CropImage.activity(im)
-                .setGuidelines(CropImageView.Guidelines.ON)
-                .setMultiTouchEnabled(true)
-                .start(getContext(),this);
-
-
-    }
 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        //Toast.makeText(getActivity(), "in", Toast.LENGTH_SHORT).show();
-       if (requestCode == PICK_IMAGE_REQUEST && resultCode ==
-                RESULT_OK
-                && data != null && data.getData() != null) {
-           im = data.getData();
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            progressDialog = new ProgressDialog(getActivity());
+            progressDialog.show();
+            progressDialog.setContentView(R.layout.loadingscreen);
+            progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            im = data.getData();
+            if (banner) {
+                final StorageReference riversRef = mStorageRef.child("homescreenbanner/" + random);
+                riversRef.putFile(im).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        riversRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                downloadUrl = uri;
+                                final String downloadUrls = downloadUrl.toString();
+                                String accesstoken = random;
+                                Bannermodalclass upload = new Bannermodalclass(downloadUrls, accesstoken);
+                                db.collection("homescreenbanner").document(accesstoken).set(upload)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Glide.with(getActivity()).load(downloadUrls).into(BannerImage);
+                                                SelectBannerImage.setVisibility(View.VISIBLE);
+                                                banner = false;
+                                                progressDialog.dismiss();
+                                                Toast.makeText(getActivity(), "Added", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(getActivity(), "Failed to add", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+                            }
+                        });
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getActivity(), "Error Occured", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            } else {
+                startcroping(im);
 //            Glide.with(this)
 //                    .load(filepath)
-//                    .into(prdtimsel);
-           startcroping(im);
-       }
-           if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-              // Toast.makeText(getActivity(), "cp", Toast.LENGTH_SHORT).show();
-               CropImage.ActivityResult result = CropImage.getActivityResult(data);
-               if (resultCode == RESULT_OK) {
-                   filepath = result.getUri();
-                   Glide.with(this).load(filepath).into(prdtimsel);
-                  // Toast.makeText(getActivity(), "Cropping successful, Sample: " + result.getSampleSize(), Toast.LENGTH_LONG).show();
-               } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                   Toast.makeText(getActivity(), "Cropping failed: " + result.getError(), Toast.LENGTH_LONG).show();
-               }
-           }
+//                    .into(prdtimseled);
+
+            }
+
+        }
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            //Toast.makeText(getActivity(), "cp", Toast.LENGTH_SHORT).show();
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                filepath = result.getUri();
+                Glide.with(this).load(filepath).into(prdtimsel);
+                progressDialog.dismiss();
+                //Toast.makeText(getActivity(), "Cropping successful, Sample: " + result.getSampleSize(), Toast.LENGTH_LONG).show();
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Toast.makeText(getActivity(), "Cropping failed: " + result.getError(), Toast.LENGTH_LONG).show();
+            }
+        }
 
     }
 
+    private void startcroping(Uri im) {
+        CropImage.activity(im)
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .setMultiTouchEnabled(true)
+                .start(getContext(), this);
+
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View v =  inflater.inflate(R.layout.fragment_addproducts, container, false);
+        final View v = inflater.inflate(R.layout.fragment_addproducts, container, false);
         mStorageRef = FirebaseStorage.getInstance().getReference();
         final Loadingadapter loadingadapter = new Loadingadapter(getActivity());
         db = FirebaseFirestore.getInstance();
@@ -169,20 +224,82 @@ public class Addproducts extends Fragment {
         price = v.findViewById(R.id.mrp);
         offp = v.findViewById(R.id.offerpr);
         quant = v.findViewById(R.id.qun);
-        delivery =v.findViewById(R.id.dvch);
+        delivery = v.findViewById(R.id.dvch);
         stock = v.findViewById(R.id.stocks);
         prdtadbt = v.findViewById(R.id.upload);
         catre = v.findViewById(R.id.catselection);
         ta = v.findViewById(R.id.description);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line,quntity);
+
+
+        //Add Banner Image Section
+        random = UUID.randomUUID().toString();
+        BannerSwitch = v.findViewById(R.id.banner_switch);
+        SelectBannerImage = v.findViewById(R.id.select_image);
+        BannerImage = v.findViewById(R.id.banner_image);
+
+        //checks if banner already added
+        CheckIfAdded();
+
+
+        BannerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    if (!flag) {
+                        banner = true;
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+
+                    }
+
+                } else {
+                    SelectBannerImage.setVisibility(View.GONE);
+                    progressDialog = new ProgressDialog(getActivity());
+                    progressDialog.show();
+                    progressDialog.setContentView(R.layout.loadingscreen);
+                    progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                    db.collection("homescreenbanner").document(random).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    mStorageRef.child("homescreenbanner/" + random).delete();
+                                    db.collection("homescreenbanner").document(random).delete();
+                                    flag = false;
+                                    BannerSwitch.setChecked(false);
+                                    progressDialog.dismiss();
+
+                                } else
+                                    progressDialog.dismiss();
+                            }
+                        }
+                    });
+                }
+            }
+        });
+
+        BannerImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        //Add Banner Image Section Ends Here
+
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, quntity);
         quant.setAdapter(adapter);
         Query query = db.collection("categories").orderBy("No");
-        FirestoreRecyclerOptions<cataddmodal> op = new FirestoreRecyclerOptions.Builder<cataddmodal>().setQuery(query,cataddmodal.class).build();
+        FirestoreRecyclerOptions<cataddmodal> op = new FirestoreRecyclerOptions.Builder<cataddmodal>().setQuery(query, cataddmodal.class).build();
         adapter1 = new FirestoreRecyclerAdapter<cataddmodal, catholder>(op) {
             @NonNull
             @Override
             public catholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.catselection,parent,false);
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.catselection, parent, false);
                 return new catholder(view);
             }
 
@@ -195,191 +312,208 @@ public class Addproducts extends Fragment {
                     @Override
                     public void onClick(View v) {
 
-                      int b = category.length;
-                      for (int c = 0;c<b;c++) {
-                          if (category[c] == model.getCatName()) {
-                              holder.c.setBackgroundColor(Color.WHITE);
-                              category[c]=null;
-                              i--;
-                              break;
-                          }
-                          else if(category[c] != model.getCatName() && c==b-1){
-                              holder.c.setBackgroundColor(Color.LTGRAY);
-                              category[i]= model.getCatName();
-                              i++;
-                              curr++;
-                          }
-                      }
+                        int b = category.length;
+                        for (int c = 0; c < b; c++) {
+                            if (category[c] == model.getCatName()) {
+                                holder.c.setBackgroundColor(Color.WHITE);
+                                category[c] = null;
+                                i--;
+                                break;
+                            } else if (category[c] != model.getCatName() && c == b - 1) {
+                                holder.c.setBackgroundColor(Color.LTGRAY);
+                                category[i] = model.getCatName();
+                                i++;
+                                curr++;
+                            }
+                        }
 
-                     // String j = String.valueOf(i);
-                       // Toast.makeText(getActivity(), category[--i], Toast.LENGTH_SHORT).show();
+                        // String j = String.valueOf(i);
+                        // Toast.makeText(getActivity(), category[--i], Toast.LENGTH_SHORT).show();
                     }
                 });
 
             }
         };
         //GridLayoutManager gridLayout = new GridLayoutManager(getContext(),3,GridLayoutManager.VERTICAL,false);
-        LinearLayoutManager li = new LinearLayoutManager(getContext(),RecyclerView.HORIZONTAL,false);
+        LinearLayoutManager li = new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false);
         catre.setHasFixedSize(true);
         catre.setLayoutManager(li);
         catre.setAdapter(adapter1);
         prdtimsel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               Intent intent = new Intent();
-               intent.setType("image/*");
-               intent.setAction(Intent.ACTION_GET_CONTENT);
-               startActivityForResult(intent, PICK_IMAGE_REQUEST);
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(intent, PICK_IMAGE_REQUEST);
             }
         });
         prdtadbt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String fi =  produ.getText().toString().trim().toLowerCase();
+                String fi = produ.getText().toString().trim().toLowerCase();
                 String s = ta.getText().toString().trim().toLowerCase();
-                String tag = fi+" "+s;
+                String tag = fi + " " + s;
                 int sl = tag.length();
-                final String [] temp = tag.split(" ");
-                l =  temp.length;
-                int p =0;
+                final String[] temp = tag.split(" ");
+                l = temp.length;
+                int p = 0;
                 String hint;
-                if (sellection == 0){
-                for (k=0;k<l;k++){
-                   String tem = temp[k];
-                   int teml = tem.length();
-                   if (p == 0){
-                       tagsa[p] =tem;
-                       p++;
-                   }
-                   else {
-                       tagsa[p] = temp[k-1]+" "+tem;
-                       p++;
-                   }
-                   for (j=0;j<teml;j++){
-                       hint=String.valueOf(tem.charAt(j));
-                       if (j == 0){
-                           tagsa[p] = hint;
-                           p++;
-                       }
-                       else {
-                           tagsa[p] = tagsa[p-1]+hint;
-                           p++;
-                       }
-                   }
-                   if (k==l-1){
-                       for (j=0;j<sl;j++){
-                           hint=String.valueOf(tag.charAt(j));
-                           if (j==0){
-                               tagsa[p] = hint;
-                               p++;
-                           }
-                           else {
-                               tagsa[p]=tagsa[p-1]+hint;
-                               p++;
-                           }
-                       }
-                   }
-                }
-                int q = tagsa.length;
-                for (int f = 0 ;f<q;f++){
-                    if (tagsa[f] != null) {
-                        if (f == 0) {
-                            a = tagsa[f];
-                        } else {
-                            a = a + "," + tagsa[f];
+                while (true) {
+                    if (sellection == 0) {
+                        for (k = 0; k < l; k++) {
+                            String tem = temp[k];
+                            int teml = tem.length();
+                            if (p == 0) {
+                                tagsa[p] = tem;
+                                p++;
+                            } else {
+                                tagsa[p] = temp[k - 1] + " " + tem;
+                                p++;
+                            }
+                            for (j = 0; j < teml; j++) {
+                                hint = String.valueOf(tem.charAt(j));
+                                if (j == 0) {
+                                    tagsa[p] = hint;
+                                    p++;
+                                } else {
+                                    tagsa[p] = tagsa[p - 1] + hint;
+                                    p++;
+                                }
+                            }
+                            if (k == l - 1) {
+                                for (j = 0; j < sl; j++) {
+                                    hint = String.valueOf(tag.charAt(j));
+                                    if (j == 0) {
+                                        tagsa[p] = hint;
+                                        p++;
+                                    } else {
+                                        tagsa[p] = tagsa[p - 1] + hint;
+                                        p++;
+                                    }
+                                }
+                            }
                         }
-                    }
-                }
-                   // ta.setText(a);
-                    sellection++;
-                }
-                else {
+                        int q = tagsa.length;
+                        for (int f = 0; f < q; f++) {
+                            if (tagsa[f] != null) {
+                                if (f == 0) {
+                                    a = tagsa[f];
+                                } else {
+                                    a = a + "," + tagsa[f];
+                                }
+                            }
+                        }
+                        // ta.setText(a);
+                        sellection++;
+                    } else {
 
-                try {
-                    loadingadapter.startloading();
-                    final String random = UUID.randomUUID().toString();
-                    final StorageReference riversRef = mStorageRef.child("Productimages/" +random);
-                    riversRef.putFile(filepath)
-                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    riversRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        try {
+                            loadingadapter.startloading();
+
+                            final StorageReference riversRef = mStorageRef.child("Productimages/" + random);
+                            riversRef.putFile(filepath)
+                                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                         @Override
-                                        public void onSuccess(Uri uri) {
-                                            downloadUrl = uri;
-                                            final List<String> catogary = Arrays.asList(category);
-                                            final List<String> tags = Arrays.asList(tagsa);
-                                            String downloadUrls = downloadUrl.toString();
-                                            String accesstoken = random;
-                                            try {
-                                                float p  = Float.valueOf(price.getText().toString()).floatValue();
-                                                float o  = Float.valueOf(offp.getText().toString()).floatValue();
-                                                float total = ((p-o)/p)*100;
-                                                int tto = (int) total;
-                                                offerpersent = Integer.toString(tto);
-                                            }
-                                            catch (Exception e){
-
-                                            }
-
-                                            if (delivery.getText().toString().trim().isEmpty()){
-                                                deliveryfee = "Free";
-                                            }
-                                            Modalclass upload = new Modalclass(produ.getText().toString().trim(),downloadUrls,price.getText().toString().trim(),
-                                                    offp.getText().toString().trim(),quant.getSelectedItem().toString(),
-                                                    stock.getText().toString().trim(),offerpersent,deliveryfee,accesstoken,catogary,tags,ta.getText().toString().trim());
-                                            db.collection("products").document(random).set(upload).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                            riversRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                                 @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    Toast.makeText(getActivity(), "Uploading Successfull", Toast.LENGTH_SHORT).show();
-                                                    produ.setText("");
-                                                    price.setText("");
-                                                    offp.setText("");
-                                                    stock.setText("");
-                                                    refesh();
-                                                    sellection=0;
-                                                    i=0;
-                                                    j=0;
-                                                    k=0;
-                                                    l=0;
-                                                    a=null;
-                                                    loadingadapter.finishloading();
+                                                public void onSuccess(Uri uri) {
+                                                    downloadUrl = uri;
+                                                    final List<String> catogary = Arrays.asList(category);
+                                                    final List<String> tags = Arrays.asList(tagsa);
+                                                    String downloadUrls = downloadUrl.toString();
+                                                    String accesstoken = random;
+                                                    try {
+                                                        float p = Float.valueOf(price.getText().toString()).floatValue();
+                                                        float o = Float.valueOf(offp.getText().toString()).floatValue();
+                                                        float total = ((p - o) / p) * 100;
+                                                        int tto = (int) total;
+                                                        offerpersent = Integer.toString(tto);
+                                                    } catch (Exception e) {
+
+                                                    }
+
+                                                    if (delivery.getText().toString().trim().isEmpty()) {
+                                                        deliveryfee = "Free";
+                                                    }
+                                                    Modalclass upload = new Modalclass(produ.getText().toString().trim(), downloadUrls, price.getText().toString().trim(),
+                                                            offp.getText().toString().trim(), quant.getSelectedItem().toString(),
+                                                            stock.getText().toString().trim(), offerpersent, deliveryfee, accesstoken, catogary, tags, ta.getText().toString().trim());
+                                                    db.collection("products").document(random).set(upload).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            Toast.makeText(getActivity(), "Uploading Successfull", Toast.LENGTH_SHORT).show();
+                                                            produ.setText("");
+                                                            price.setText("");
+                                                            offp.setText("");
+                                                            stock.setText("");
+                                                            SelectBannerImage.setVisibility(View.GONE);
+                                                            flag = false;
+                                                            BannerSwitch.setChecked(false);
+                                                            refesh();
+                                                            sellection = 0;
+                                                            i = 0;
+                                                            j = 0;
+                                                            k = 0;
+                                                            l = 0;
+                                                            a = null;
+                                                            loadingadapter.finishloading();
 
 //                                                    tags.clear();
 //                                                    catogary.clear();
 
 
+                                                        }
+                                                    }).addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            Toast.makeText(getActivity(), "Uploading Failed", Toast.LENGTH_SHORT).show();
+                                                            loadingadapter.finishloading();
+                                                        }
+                                                    });
 
-                                                }
-                                            }).addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Toast.makeText(getActivity(), "Uploading Failed", Toast.LENGTH_SHORT).show();
-                                                    loadingadapter.finishloading();
                                                 }
                                             });
-
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception exception) {
+                                            Toast.makeText(getActivity(), "Error Occurred", Toast.LENGTH_SHORT).show();
+                                            loadingadapter.finishloading();
                                         }
                                     });
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception exception) {
-                                    Toast.makeText(getActivity(), "Error Occurred", Toast.LENGTH_SHORT).show();
-                                    loadingadapter.finishloading();
-                                }
-                            });
 
-                }catch (Exception e){
-                    Toast.makeText(getActivity(), "Fields are empty", Toast.LENGTH_SHORT).show();
-                    loadingadapter.finishloading();
+                        } catch (Exception e) {
+                            Toast.makeText(getActivity(), "Fields are empty", Toast.LENGTH_SHORT).show();
+                            loadingadapter.finishloading();
+                        }
+                        break;
+                    }
                 }
-
-            }
             }
         });
         return v;
+    }
+
+    private void CheckIfAdded() {
+        db.collection("homescreenbanner").document(random).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        flag = true;
+                        BannerSwitch.setChecked(true);
+                        SelectBannerImage.setVisibility(View.VISIBLE);
+                        Glide.with(getActivity()).load(document.getString("imageurl")).into(BannerImage);
+
+                    }
+                }
+            }
+        });
+
     }
 
     private void refesh() {
@@ -394,6 +528,7 @@ public class Addproducts extends Fragment {
         ImageView cati;
         TextView catn;
         LinearLayout c;
+
         public catholder(@NonNull View itemView) {
             super(itemView);
             cati = itemView.findViewById(R.id.catimg);
@@ -401,6 +536,7 @@ public class Addproducts extends Fragment {
             c = itemView.findViewById(R.id.catfull);
         }
     }
+
     @Override
     public void onStart() {
         super.onStart();

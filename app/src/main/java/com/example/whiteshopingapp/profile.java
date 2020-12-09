@@ -108,7 +108,7 @@ public class profile extends Fragment {
         drop = v.findViewById(R.id.datepickerimage);
         order = v.findViewById(R.id.orderview);
         DecimalFormat decimalFormat = new DecimalFormat("00");
-       Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         year = calendar.get(Calendar.YEAR);
         years = Integer.toString(year);
         month = 1+calendar.get(Calendar.MONTH) ;
@@ -189,7 +189,7 @@ public class profile extends Fragment {
                     }
                 });
                // holder.name.setText(model.getUser_id());
-                holder.time.setText(model.getTime());
+                holder.time.setText(model.getTime2());
                 holder.status.setText(model.getStatus());
                 holder.orderid.setText(model.getOrder_id());
                 holder.ordercard.setOnClickListener(new View.OnClickListener() {
@@ -202,7 +202,7 @@ public class profile extends Fragment {
                         args.putString("orderid",model.getOrder_id());
                         args.putString("status",model.getStatus());
                         args.putString("date",orderselecter);
-                        args.putString("time",model.getTime());
+                        args.putString("time",model.getTime2());
                         args.putString("total",model.getTotalAmount());
                         ord.setArguments(args);
                         fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();

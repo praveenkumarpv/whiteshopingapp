@@ -114,7 +114,7 @@ public class orderSorted extends Fragment {
                 });
                // Glide.with(getActivity()).asBitmap().load(model.getImurl()).into(holder.proimg);
                // holder.name.setText(model.getUser_id());
-                holder.time.setText(model.getTime());
+                holder.time.setText(model.getDate());
                 holder.status.setText(model.getStatus());
                 holder.orderid.setText(model.getOrder_id());
             }

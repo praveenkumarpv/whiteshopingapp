@@ -284,7 +284,7 @@ public class editproduct extends Fragment {
                                     db.collection("homescreenbanner").document(imagename).delete();
                                     flag = false;
                                     BannerSwitch.setChecked(false);
-
+                                    progressDialog.dismiss();
 
                                 }else
                                     progressDialog.dismiss();

@@ -1,6 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimary">#2F2F7F</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
+    <color name="transparent">#00000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="red">#FF0000</color>
+    <color name="indigo">#2F2F7F</color>
+    <color name="light_indigo">#668eff</color>
+    blue_selected
+
+    <color name="address">#2F7092</color>
+    <color name="followers">#0D5D98</color>
+    <color name="headings">#3797CF</color>
+    <color name="solidCircle">#AAFFFFFF</color>
+    <color name="circleBorder">#50FFFFFF</color>
+    <color name="gradEnd">#67EFC8</color>
+    <color name="gradStart">#63C9FF</color>
+    <color name="followersBg">#65DCE5</color>
+    <color name="followingBg">#49BEFF</color>
+    <color name="grey">#808080</color>
+
+
+    <color name="navigationBarColorAttempted">#2F2F7F</color>
+    <color name="navigationBarColorSkipped">#063e8b</color>
+    <color name="violet">#673ab7</color>
+    <color name="sky_blue">#0f96fe</color>
+    <color name="sky_blue_pressed">#245e61</color>
+    <color name="black">#000</color>
+    <color name="lightGreen">#76ab42</color>
 </resources>
