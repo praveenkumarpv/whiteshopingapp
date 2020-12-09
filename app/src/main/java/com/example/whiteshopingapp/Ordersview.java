@@ -21,6 +21,7 @@ import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -139,7 +140,7 @@ public class Ordersview extends Fragment {
                         Date.setText("Showing Orders On " +yymmdd);
                         LoadOrdersToRc(yymmdd);
                     }
-                },Integer.parseInt(year),Integer.parseInt(month) ,Integer.parseInt(day));
+                },Integer.parseInt(year),Integer.parseInt(month)-1 ,Integer.parseInt(day));
                 datePickerDialog.show();
             }
         });
@@ -152,7 +153,7 @@ public class Ordersview extends Fragment {
     private void LoadOrdersToRc(final String date) {
 
         Query query = db.collection("Orders").whereEqualTo("date", date).orderBy("time", Query.Direction.DESCENDING);
-        // Toast.makeText(getActivity(), wow, Toast.LENGTH_SHORT).show();
+
         FirestoreRecyclerOptions<ordermodalclass> op = new FirestoreRecyclerOptions.Builder<ordermodalclass>().setQuery(query, ordermodalclass.class).build();
         adapter = new FirestoreRecyclerAdapter<ordermodalclass, Ordersview.orderviewholder>(op) {
             @NonNull
@@ -173,11 +174,12 @@ public class Ordersview extends Fragment {
                             DocumentSnapshot documentSnapshot = task.getResult();
                             holder.name.setText(documentSnapshot.getString("name"));
                             Glide.with(getActivity()).load(documentSnapshot.getString("img")).into(holder.proimg);
-                            progressDialog.dismiss();
+
                         }
                     }
                 });
                 // holder.name.setText(model.getUser_id());
+                holder.totalPrice.setText(""+model.getTotalAmount()+" /-");
                 holder.time.setText(model.getTime2());
                 holder.status.setText(model.getStatus());
                 holder.orderid.setText(model.getOrder_id());
@@ -199,7 +201,7 @@ public class Ordersview extends Fragment {
                         fragmentTransaction.commit();
                     }
                 });
-
+                progressDialog.dismiss();
             }
 
         };
@@ -218,7 +220,7 @@ public class Ordersview extends Fragment {
 
     private class orderviewholder extends RecyclerView.ViewHolder {
         CircleImageView proimg;
-        TextView name, time, orderid, status;
+        TextView name, time, orderid, status, totalPrice;
         CardView ordercard;
 
         public orderviewholder(@NonNull View itemView) {
@@ -229,6 +231,7 @@ public class Ordersview extends Fragment {
             orderid = itemView.findViewById(R.id.orderid);
             status = itemView.findViewById(R.id.status);
             ordercard = itemView.findViewById(R.id.ordercardview);
+            totalPrice = itemView.findViewById(R.id.total_price);
         }
     }
 

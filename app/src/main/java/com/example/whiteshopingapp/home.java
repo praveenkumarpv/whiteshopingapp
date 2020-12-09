@@ -1,5 +1,6 @@
 package com.example.whiteshopingapp;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -38,7 +39,7 @@ public class home extends Fragment {
     RecyclerView addedp;
     private FirestoreRecyclerAdapter adapter;
     FirebaseFirestore db;
-
+    ProgressDialog progressDialog;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -85,18 +86,13 @@ public class home extends Fragment {
         // Inflate the layout for this fragment
         db = FirebaseFirestore.getInstance();
         final Loadingadapter loadingadapter = new Loadingadapter(getActivity());
-        loadingadapter.startloading();
         View v = inflater.inflate(R.layout.fragment_home, container, false);
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                loadingadapter.finishloading();
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.show();
+        progressDialog.setContentView(R.layout.loadingscreen);
+        progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
-            }
-        },2000);
-
-        addp =v.findViewById(R.id.addproducts);
+        addp = v.findViewById(R.id.addproducts);
         addedp = v.findViewById(R.id.productre);
         addp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,24 +100,24 @@ public class home extends Fragment {
                 //Navigation.findNavController(v).navigate(R.id.action_home2_to_addproducts2);
 
                 fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragment,new Addproducts());
+                fragmentTransaction.replace(R.id.fragment, new Addproducts());
                 fragmentTransaction.commit();
             }
         });
         Query query = db.collection("products");
-        FirestoreRecyclerOptions<Modalclass> op = new FirestoreRecyclerOptions.Builder<Modalclass>().setQuery(query,Modalclass.class).build();
-        adapter = new FirestoreRecyclerAdapter<Modalclass, productviewholder>(op){
+        FirestoreRecyclerOptions<Modalclass> op = new FirestoreRecyclerOptions.Builder<Modalclass>().setQuery(query, Modalclass.class).build();
+        adapter = new FirestoreRecyclerAdapter<Modalclass, productviewholder>(op) {
             @NonNull
             @Override
             public productviewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.addproductcardview,parent,false);
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.addproductcardview, parent, false);
                 return new productviewholder(view);
             }
 
             @Override
             protected void onBindViewHolder(final productviewholder productviewholder, int i, final Modalclass modalclass) {
-                productviewholder.pri.setText("₹"+modalclass.getOffprice());
-                productviewholder.mr.setText("₹"+modalclass.getMrp());
+                productviewholder.pri.setText("₹" + modalclass.getOffprice());
+                productviewholder.mr.setText("₹" + modalclass.getMrp());
                 productviewholder.productname.setText(modalclass.getProductname());
                 Glide.with(getActivity()).asBitmap().load(modalclass.getImurl()).into(productviewholder.proimg);
                 productviewholder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -129,26 +125,27 @@ public class home extends Fragment {
                     public void onClick(View v) {
                         editproduct lb = new editproduct();
                         Bundle args = new Bundle();
-                        args.putString("productname",modalclass.getProductname());
-                        args.putString("price",modalclass.getMrp());
-                        args.putString("offerprice",modalclass.getOffprice());
-                        args.putString("quanty",modalclass.getQuantity());
-                        args.putString("stock",modalclass.getStock());
-                        args.putString("offerpercentage",modalclass.getOffpers());
-                        args.putString("delivery",modalclass.getDeliverycharge());
-                        args.putString("image",modalclass.getImurl());
-                        args.putString("imagename",modalclass.getImagename());
-                        args.putString("description",modalclass.getDescription());
+                        args.putString("productname", modalclass.getProductname());
+                        args.putString("price", modalclass.getMrp());
+                        args.putString("offerprice", modalclass.getOffprice());
+                        args.putString("quanty", modalclass.getQuantity());
+                        args.putString("stock", modalclass.getStock());
+                        args.putString("offerpercentage", modalclass.getOffpers());
+                        args.putString("delivery", modalclass.getDeliverycharge());
+                        args.putString("image", modalclass.getImurl());
+                        args.putString("imagename", modalclass.getImagename());
+                        args.putString("description", modalclass.getDescription());
                         lb.setArguments(args);
                         fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                        fragmentTransaction.replace(R.id.fragment,lb);
+                        fragmentTransaction.replace(R.id.fragment, lb);
                         fragmentTransaction.commit();
                     }
                 });
 
+                progressDialog.dismiss();
             }
         };
-        GridLayoutManager gridLayout = new GridLayoutManager(getActivity(),3,GridLayoutManager.VERTICAL,false);
+        GridLayoutManager gridLayout = new GridLayoutManager(getActivity(), 3, GridLayoutManager.VERTICAL, false);
         addedp.setHasFixedSize(true);
         addedp.setLayoutManager(gridLayout);
         addedp.setAdapter(adapter);
@@ -157,18 +154,19 @@ public class home extends Fragment {
 
     private class productviewholder extends RecyclerView.ViewHolder {
         ImageView proimg;
-        TextView pri,mr,productname;
+        TextView pri, mr, productname;
         Button edit;
 
         public productviewholder(@NonNull View itemView) {
             super(itemView);
-            proimg  = itemView.findViewById(R.id.productimage);
+            proimg = itemView.findViewById(R.id.productimage);
             pri = itemView.findViewById(R.id.offerprice);
             mr = itemView.findViewById(R.id.mrps);
             //edit = itemView.findViewById(R.id.editbutton);
-            productname =itemView.findViewById(R.id.productnames);
+            productname = itemView.findViewById(R.id.productnames);
         }
     }
+
     @Override
     public void onStart() {
         super.onStart();

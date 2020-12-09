@@ -6,7 +6,7 @@ public class ordermodalclass {
     private String Status;
     private String User_id;
     private String date;
-    private String time;
+    private long time;
 
     public String getTime2() {
         return time2;
@@ -22,7 +22,7 @@ public class ordermodalclass {
     public ordermodalclass() {
     }
 
-    public ordermodalclass(String imurl, String order_id, String status, String user_id, String date, String time,String TotalAmount, String time2) {
+    public ordermodalclass(String imurl, String order_id, String status, String user_id, String date, long time,String TotalAmount, String time2) {
         this.imurl = imurl;
         this.Order_id = order_id;
         this.Status = status;
@@ -81,11 +81,11 @@ public class ordermodalclass {
         this.date = date;
     }
 
-    public String getTime() {
+    public long getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(long time) {
         this.time = time;
     }
 }
