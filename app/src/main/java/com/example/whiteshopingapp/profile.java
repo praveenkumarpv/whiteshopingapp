@@ -111,13 +111,13 @@ public class profile extends Fragment {
         Calendar calendar = Calendar.getInstance();
         year = calendar.get(Calendar.YEAR);
         years = Integer.toString(year);
-        month = 1+calendar.get(Calendar.MONTH) ;
-        months = Integer.toString(month);
+        month = calendar.get(Calendar.MONTH) ;
+        months = Integer.toString(month+1);
         day = calendar.get(Calendar.DAY_OF_MONTH);
         dates = Integer.toString(day);
         orderselecter = dates+"/"+months+"/"+years ;
-        getdata(orderselecter);
         date.setText(dates+"/"+months+"/"+years);
+        getdata(orderselecter);
         date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

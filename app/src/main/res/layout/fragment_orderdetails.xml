@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0F2085"
     android:orientation="vertical"
     tools:context=".orderdetails">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
         android:layout_weight="0.7"
+        android:background="#0F2085"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -203,14 +208,18 @@
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="0.5"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@drawable/backgroundwhite">
+        android:background="#0F2085">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/orderlistbackground">
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.8"
+            android:layout_height="30dp"
             android:orientation="horizontal">
             <LinearLayout
                 android:layout_width="match_parent"
@@ -226,7 +235,7 @@
                     android:text="Address"
                     android:gravity="center_vertical"
                     android:fontFamily="@font/abel"
-                    android:layout_marginStart="50dp"/>
+                    android:layout_marginStart="10dp"/>
 
             </LinearLayout>
             <LinearLayout
@@ -259,25 +268,141 @@
             </LinearLayout>
 
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/horisondaldivider"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.9"
+                android:text="Images"
+                android:textSize="15dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginBottom="2dp"
+                android:gravity="center"
+                android:textColor="@color/black"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.2"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginBottom="2dp"
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/black"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:text="Product"
+                    android:textColor="@color/black"
+                    android:textSize="15dp"
+                    android:gravity="center"
+                    android:layout_gravity="center_vertical"/>
+                <LinearLayout
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/black"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.6"
+                    android:text="Count"
+                    android:textColor="@color/black"
+                    android:textSize="15dp"
+                    android:gravity="center"
+                    android:layout_gravity="center_vertical"/>
+                <LinearLayout
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/black"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.6"
+                    android:text="Qty"
+                    android:gravity="center"
+                    android:textColor="@color/black"
+                    android:textSize="15dp"
+                    android:layout_gravity="center_vertical"/>
+                <LinearLayout
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/black"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="0.6"
+                    android:gravity="center"
+                    android:text="Unitprice"
+                    android:textColor="@color/black"
+                    android:textSize="12dp" />
+                <LinearLayout
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/black"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.6"
+                    android:text="Total"
+                    android:textColor="@color/black"
+                    android:textSize="15dp"
+                    android:gravity="center"
+                    android:layout_gravity="center_vertical"/>
 
 
 
+
+
+            </LinearLayout>
+
+
+
+
+    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/horisondaldivider"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/consumedproduct"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0.1"
             android:layout_marginTop="5dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
             />
-
-
-
         </LinearLayout>
+    </LinearLayout>
+
 
 
     </LinearLayout>
+    </LinearLayout>
+
+
+    </ScrollView>
 
 
 
