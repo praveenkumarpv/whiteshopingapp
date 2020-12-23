@@ -32,6 +32,12 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firestore.v1.StructuredQuery;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -51,6 +57,8 @@ public class Ordersview extends Fragment {
     ProgressDialog progressDialog;
     FragmentTransaction fragmentTransaction;
     String year, month, day, date;
+    boolean flag = false;
+    int count;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -63,6 +71,7 @@ public class Ordersview extends Fragment {
     public Ordersview() {
         // Required empty public constructor
     }
+
 
     /**
      * Use this factory method to create a new instance of
@@ -115,12 +124,11 @@ public class Ordersview extends Fragment {
         month = String.valueOf(calendar.get(Calendar.MONTH) + 1);
         day = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
         date = day + "/" + month + "/" + year;
-        Date.setText("Today Orders ( " +date+" )");
+        Date.setText("Today Orders ( " + date + " )");
         //Check If Orders Are empty
-        CheckOrderEmpty();
         //If Empty Show Empty orders view
         //Else Load Orders To RC
-        LoadOrdersToRc(date);
+        LoadOrdersToRc(date, 1);
 
         //Date Picker implimentation
         Date_Picker.setOnClickListener(new View.OnClickListener() {
@@ -133,14 +141,22 @@ public class Ordersview extends Fragment {
                         progressDialog.show();
                         progressDialog.setContentView(R.layout.loadingscreen);
                         progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-                        String yy=String.valueOf(i);
-                        String mm=String.valueOf(i1+1);
-                        String dd=String.valueOf(i2);
-                        String yymmdd= dd + "/" + mm + "/" + yy;
-                        Date.setText("Showing Orders On " +yymmdd);
-                        LoadOrdersToRc(yymmdd);
+                        String yy = String.valueOf(i);
+                        String mm = String.valueOf(i1 + 1);
+                        String dd = String.valueOf(i2);
+                        String yymmdd = dd + "/" + mm + "/" + yy;
+                        Date.setText("Showing Orders On " + yymmdd);
+                        String picked;
+                        if (i2 < 10) {
+                            picked = "20" + mm + "0" + dd;
+                        } else {
+                            picked = "20" + mm + dd;
+                        }
+
+                        flag = true;
+                        LoadOrdersToRc(yymmdd, Long.parseLong(picked));
                     }
-                },Integer.parseInt(year),Integer.parseInt(month)-1 ,Integer.parseInt(day));
+                }, Integer.parseInt(year), Integer.parseInt(month) - 1, Integer.parseInt(day));
                 datePickerDialog.show();
             }
         });
@@ -150,9 +166,30 @@ public class Ordersview extends Fragment {
     }
 
     //Load ORders Function
-    private void LoadOrdersToRc(final String date) {
+    private void LoadOrdersToRc(final String date, long picked) {
+        CheckOrderEmpty(date);
+        long time;
+        long LimitTime;
+        if (flag) {
+            time = picked * 1000000;
+            //Toast.makeText(getActivity(), "" + time, Toast.LENGTH_SHORT).show();
+            LimitTime = (picked + 1) * 1000000;
+            //Toast.makeText(getActivity(), "" + LimitTime, Toast.LENGTH_SHORT).show();
+        } else {
+            DateFormat df = new SimpleDateFormat("yyMMdd"); // Just the year, with 2 digits
+            final long tm = Long.parseLong(df.format(new Date()));
 
-        Query query = db.collection("Orders").whereEqualTo("date", date).orderBy("time", Query.Direction.DESCENDING);
+            time = tm * 1000000;
+            //Toast.makeText(getActivity(), "" + time, Toast.LENGTH_SHORT).show();
+            LimitTime = (tm + 1) * 1000000;
+            //Toast.makeText(getActivity(), "" + LimitTime, Toast.LENGTH_SHORT).show();
+        }
+
+
+        //
+
+
+        Query query = db.collection("Orders").whereGreaterThan("time", time).orderBy("time", Query.Direction.DESCENDING).whereLessThan("time", LimitTime);
 
         FirestoreRecyclerOptions<ordermodalclass> op = new FirestoreRecyclerOptions.Builder<ordermodalclass>().setQuery(query, ordermodalclass.class).build();
         adapter = new FirestoreRecyclerAdapter<ordermodalclass, Ordersview.orderviewholder>(op) {
@@ -179,7 +216,7 @@ public class Ordersview extends Fragment {
                     }
                 });
                 // holder.name.setText(model.getUser_id());
-                holder.totalPrice.setText(""+model.getTotalAmount()+" /-");
+                holder.totalPrice.setText("" + model.getTotalAmount() + " /-");
                 holder.time.setText(model.getTime2());
                 holder.status.setText(model.getStatus());
                 holder.orderid.setText(model.getOrder_id());
@@ -214,7 +251,33 @@ public class Ordersview extends Fragment {
     }
 
     //Check Orders Empty
-    private void CheckOrderEmpty() {
+    private void CheckOrderEmpty(final String dates) {
+        db.collection("Orders")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            int count = 0;
+                            for (DocumentSnapshot document : task.getResult()) {
+                                if (document.getString("date").equals(dates)) {
+                                    OrdersEmpty.setVisibility(View.GONE);
+                                    OrdersSorted.setVisibility(View.VISIBLE);
+                                    break;
+                                } else {
+                                    OrdersSorted.setVisibility(View.GONE);
+                                    OrdersEmpty.setVisibility(View.VISIBLE);
+                                }
+                                count++;
+                            }
+                            progressDialog.dismiss();
+
+
+                        } else {
+                            Toast.makeText(getActivity(), "Check your network connection", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
 
     }
 

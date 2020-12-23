@@ -7,6 +7,7 @@
     tools:context=".home">
 
     <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="20dp"
         android:id="@+id/productre"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -24,33 +25,88 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         android:clickable="true"
-        android:backgroundTint="#fff"
-        android:src="@drawable/addok"
+        android:backgroundTint="@color/indigo"
+        android:src="@drawable/add_button"
         app:maxImageSize="@android:dimen/app_icon_size"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <LinearLayout
+        android:gravity="center_vertical"
         android:id="@+id/linearLayout2"
         android:layout_width="0dp"
-        android:layout_height="45dp"
+        android:layout_height="55dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="#fff">
+        android:background="@color/indigo">
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:padding="5dp"
+            android:id="@+id/head"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_weight="0.5"
-            android:background="#fff"
             android:fontFamily="@font/biryani_light"
             android:gravity="center_vertical"
             android:text="All Products"
-            android:textColor="#000"
-            android:textSize="21dp" />
+            android:textColor="@color/white"
+            android:textSize="16dp"
+            />
+        <LinearLayout
+            android:layout_marginEnd="290dp"
+            android:id="@+id/tag_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:gravity="center_vertical"
+            android:background="@drawable/search_tag_bg"
+            android:textSize="16dp"
+            android:visibility="gone"
+        >
+            <TextView
+                android:padding="5dp"
+                android:id="@+id/tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:fontFamily="@font/biryani_light"
+                android:gravity="center_vertical"
+                android:text="tag"
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                />
+            <ImageView
+                android:id="@+id/close_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_close_24"
+                android:background="@drawable/search_tag_close"
+                android:layout_marginEnd="5dp"/>
+        </LinearLayout>
+        <ImageView
+            android:id="@+id/search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_search_24"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="20dp"/>
+
+
 
     </LinearLayout>
+
+    <EditText
+        android:id="@+id/search_key"
+        android:layout_marginRight="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15dp"
+        android:textColor="@color/white"
+        tools:ignore="MissingConstraints"
+        android:visibility="gone"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

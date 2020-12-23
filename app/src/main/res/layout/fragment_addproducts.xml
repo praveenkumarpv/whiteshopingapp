@@ -216,13 +216,12 @@
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:layout_marginTop="3dp"
-            android:paddingStart="3dp"
-            android:paddingEnd="3dp"
-            android:paddingTop="2dp"
+            android:paddingTop="10dp"
+            android:paddingLeft="10dp"
             android:gravity="top"
             android:inputType="textMultiLine"
             android:paddingBottom="2dp"
-            android:hint="description.........."/>
+            android:hint="Add description"/>
         <Button
             android:id="@+id/upload"
             android:layout_width="200dp"
