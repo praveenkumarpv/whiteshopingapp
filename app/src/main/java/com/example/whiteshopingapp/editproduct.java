@@ -71,7 +71,6 @@ public class editproduct extends Fragment {
     LinearLayout SelectBannerImage;
     private EditText produed, priceed, offped, deliveryed, stocked, des;
     private Spinner quanted;
-    private TextView qunt;
     private String deliveryfee, imagename, product, mrp, off, quanty, stock, offerpercent, delivery, imageurl, descrip;
     private Uri downloadUrl, im;
     private FirebaseFirestore db;
@@ -223,7 +222,6 @@ public class editproduct extends Fragment {
         updates = v.findViewById(R.id.upload);
         delets = v.findViewById(R.id.delet);
         updates = v.findViewById(R.id.update);
-        qunt = v.findViewById(R.id.quntext);
         des = v.findViewById(R.id.description);
         catreed = v.findViewById(R.id.catselectioned);
         product = getArguments().getString("productname");
@@ -239,7 +237,26 @@ public class editproduct extends Fragment {
         produed.setText(product);
         priceed.setText(mrp);
         offped.setText(off);
-        qunt.setText(quanty);
+        quanted.post(new Runnable() {
+            @Override
+            public void run() {
+                switch (quanty) {
+                    case "Quantity":
+                        quanted.setSelection(0);
+                        break;
+                    case "Kilogram":
+                        quanted.setSelection(1);
+                        break;
+                    case "Gram":
+                        quanted.setSelection(2);
+                        break;
+                    case "Liter":
+                        quanted.setSelection(3);
+                        break;
+                }
+            }
+        });
+
         deliveryed.setText(delivery);
         stocked.setText(stock);
         des.setText(descrip);
@@ -332,17 +349,10 @@ public class editproduct extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                qunt.setText(quanty);
+
             }
         });
-        qunt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                quanted.setVisibility(View.VISIBLE);
-                qunt.setVisibility(View.GONE);
-                y++;
-            }
-        });
+
 
         prdtimseled.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -531,7 +541,7 @@ public class editproduct extends Fragment {
                             if (deliveryed.getText().toString().trim().isEmpty()) {
                                 deliveryfee = "Free";
                             }
-                            Modalclass upload = new Modalclass(produed.getText().toString().trim(), imageurl, priceed.getText().toString().trim(), offped.getText().toString().trim(), quanty,
+                            Modalclass upload = new Modalclass(produed.getText().toString().trim(), imageurl, priceed.getText().toString().trim(), offped.getText().toString().trim(),quanted.getSelectedItem().toString(),
                                     stocked.getText().toString().trim(), offerpersents, deliveryfee, imagename, catogary, tags, des.getText().toString().trim());
                             db.collection("products").document(imagename).set(upload, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override

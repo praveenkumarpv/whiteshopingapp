@@ -1,6 +1,7 @@
 package com.example.whiteshopingapp;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,9 +14,12 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +27,7 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.api.Distribution;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
@@ -40,6 +45,12 @@ public class home extends Fragment {
     private FirestoreRecyclerAdapter adapter;
     FirebaseFirestore db;
     ProgressDialog progressDialog;
+    TextView Head , SearchTagText;
+    LinearLayout SearchTag;
+    EditText SearchKey;
+    ImageView SearchButton, TagClose;
+    boolean Clicked = false;
+    Query query;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -48,6 +59,12 @@ public class home extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    @Override
+    public void onResume() {
+        super.onResume();
+        ShowProduct(query);
+
+    }
 
     public home() {
         // Required empty public constructor
@@ -86,14 +103,70 @@ public class home extends Fragment {
         // Inflate the layout for this fragment
         db = FirebaseFirestore.getInstance();
         final Loadingadapter loadingadapter = new Loadingadapter(getActivity());
-        View v = inflater.inflate(R.layout.fragment_home, container, false);
+        final View v = inflater.inflate(R.layout.fragment_home, container, false);
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.show();
         progressDialog.setContentView(R.layout.loadingscreen);
         progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-
         addp = v.findViewById(R.id.addproducts);
         addedp = v.findViewById(R.id.productre);
+        SearchButton = v.findViewById(R.id.search);
+        SearchKey = v.findViewById(R.id.search_key);
+        Head = v.findViewById(R.id.head);
+        TagClose = v.findViewById(R.id.close_tag);
+        SearchTag = v.findViewById(R.id.tag_view);
+        SearchTagText= v.findViewById(R.id.tag);
+
+        TagClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SearchTag.setVisibility(View.GONE);
+                Head.setVisibility(View.VISIBLE);
+                ShowProduct( db.collection("products"));
+            }
+        });
+
+        query= db.collection("products").orderBy("productname");
+        ShowProduct(query);
+        SearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                if (Clicked) {
+                    String key = SearchKey.getText().toString();
+                    if (key.isEmpty())
+                        SearchKey.setError("Enter Some Text to search");
+                    else {
+                        SearchKey.setVisibility(View.GONE);
+                        SearchTag.setVisibility(View.VISIBLE);
+                        SearchTagText.setText(""+key);
+
+                        query = db.collection("products").whereArrayContains("tags", key.toLowerCase());
+                        ShowProduct(query);
+                        Clicked = false;
+                        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    }
+                }
+                else{
+                    SearchKey.setText("");
+
+                    Head.setVisibility(View.INVISIBLE);
+                    SearchKey.setVisibility(View.VISIBLE);
+                    SearchKey.requestFocus();
+                    InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+                    Clicked=true;
+                }
+
+
+            }
+        });
+
+
+
+
         addp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,7 +177,12 @@ public class home extends Fragment {
                 fragmentTransaction.commit();
             }
         });
-        Query query = db.collection("products");
+
+
+        return v;
+    }
+
+    private void ShowProduct(Query query) {
         FirestoreRecyclerOptions<Modalclass> op = new FirestoreRecyclerOptions.Builder<Modalclass>().setQuery(query, Modalclass.class).build();
         adapter = new FirestoreRecyclerAdapter<Modalclass, productviewholder>(op) {
             @NonNull
@@ -149,7 +227,7 @@ public class home extends Fragment {
         addedp.setHasFixedSize(true);
         addedp.setLayoutManager(gridLayout);
         addedp.setAdapter(adapter);
-        return v;
+        adapter.startListening();
     }
 
     private class productviewholder extends RecyclerView.ViewHolder {
@@ -170,7 +248,7 @@ public class home extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        adapter.startListening();
+
     }
 
     @Override
