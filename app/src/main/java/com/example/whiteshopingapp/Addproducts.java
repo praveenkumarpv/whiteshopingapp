@@ -83,7 +83,7 @@ public class Addproducts extends Fragment {
     private FragmentManager fragmentManager;
     private Integer i = 0, curr = 9, j, k, sellection = 0, l;
     private FirestoreRecyclerAdapter adapter1;
-    public String[] quntity = new String[]{"Quantity", "Kilogram", "Gram", "Liter"};
+    public String[] quntity = new String[]{"Quantity", "Kilogram", "Gram", "Liter","Gram/Kg"};
     public String[] category = new String[curr];
     public String[] tagsa = new String[100];
     String random;

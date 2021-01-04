@@ -79,7 +79,7 @@ public class editproduct extends Fragment {
     private RecyclerView catreed;
     boolean banner = false, flag = false;
     private FragmentTransaction fragmentTransaction;
-    public String[] quntity = new String[]{"Quantity", "Kilogram", "Gram", "Liter"};
+    public String[] quntity = new String[]{"Quantity", "Kilogram", "Gram", "Liter","Gram/Kg"};
     public String[] category = new String[9];
     private String[] tagsa = new String[100];
     private List<String> group = new ArrayList<>();

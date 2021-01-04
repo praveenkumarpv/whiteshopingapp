@@ -234,9 +234,14 @@ public class orderdetails extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull itemsviewholder holder, int position, @NonNull itemsmodelclass model) {
                 holder.product.setText(model.getProduct());
-                String c = Long.toString(model.getCount());
-                holder.quant.setText(c);
-
+                String c = Integer.toString(model.getCount());
+                holder.Count.setText(c);
+                Glide.with(getContext()).load(model.getImg()).into(holder.productimage);
+                holder.Uprice.setText(model.getUnitPrice());
+                float g = Float.parseFloat(model.getPrice());
+                Float h = g*model.getCount();
+                holder.Totalprice.setText(Float.toString(h).trim());
+                holder.Quant.setText(model.getQuantity());
             }
         };
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -248,11 +253,18 @@ public class orderdetails extends Fragment {
     }
 
     private class itemsviewholder extends RecyclerView.ViewHolder {
-        TextView product,quant;
+        TextView product,Quant,Uprice,Totalprice,Count;
+        ImageView productimage;
         public itemsviewholder(@NonNull View itemView) {
             super(itemView);
             product = itemView.findViewById(R.id.itemsname);
-            quant = itemView.findViewById(R.id.itemqunt);
+            Quant = itemView.findViewById(R.id.itemqunt);
+            Uprice = itemView.findViewById(R.id.uprice);
+            Totalprice = itemView.findViewById(R.id.totalsum);
+            Count = itemView.findViewById(R.id.count);
+            productimage = itemView.findViewById(R.id.productimage);
+
+
         }
     }
     @Override
